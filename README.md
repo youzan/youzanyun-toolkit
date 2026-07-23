@@ -1,6 +1,6 @@
 # Youzan Codex Plugins
 
-有赞内部 Codex 插件市场。这个仓库根目录是 marketplace，插件源码放在 `plugins/` 下。
+有赞内部 Codex 插件市场。Codex marketplace manifest 位于 `.agents/plugins/marketplace.json`，插件源码放在 `plugins/` 下。
 
 ## 安装
 
