@@ -1,0 +1,4 @@
+interface:
+  display_name: "有赞知识库查询"
+  short_description: "通过云文档中心检索有赞内部知识库内容"
+  default_prompt: "使用 $yzy-knowledge-search 查询有赞知识库中的订单接口信息。"
