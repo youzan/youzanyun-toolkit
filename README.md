@@ -7,15 +7,22 @@
 从 Git 仓库添加 marketplace，使用方不需要提前 `git clone`，但需要本机已有访问该仓库的权限：
 
 ```bash
-codex plugin marketplace add <git-repo-url> --ref main
+codex plugin marketplace add https://gitlab.qima-inc.com/youzanyun/youzan-toolkit --ref main
 codex plugin add youzan-toolkit@youzan
 ```
 
 如果使用本地路径安装，才需要先把仓库拉到本机：
 
 ```bash
-git clone <git-repo-url> /path/to/youzan-toolkit
+git clone https://gitlab.qima-inc.com/youzanyun/youzan-toolkit /path/to/youzan-toolkit
 codex plugin marketplace add /path/to/youzan-toolkit
+codex plugin add youzan-toolkit@youzan
+```
+
+如果本机只配置了 SSH Git 权限，也可以使用：
+
+```bash
+codex plugin marketplace add git@gitlab.qima-inc.com:youzanyun/youzan-toolkit.git --ref main
 codex plugin add youzan-toolkit@youzan
 ```
 
