@@ -20,7 +20,7 @@ python3 <skill-dir>/scripts/search_knowledge.py "订单接口" --top-k 3
 如果脚本不可用，直接调用接口：
 
 ```bash
-curl -sS -X POST 'https://cloud-doc-center.s.qima-inc.com/doc/knowledge/search' \
+curl -sS -X POST 'http://doc.youzanyun.com/api/doc/knowledge/search' \
   -H 'Content-Type: application/json' \
   -d '{"query":"订单接口","topK":3}'
 ```
@@ -62,7 +62,7 @@ curl -sS -X POST 'https://cloud-doc-center.s.qima-inc.com/doc/knowledge/search' 
 接口：
 
 ```text
-POST https://cloud-doc-center.s.qima-inc.com/doc/knowledge/search
+POST http://doc.youzanyun.com/api/doc/knowledge/search
 Content-Type: application/json
 ```
 

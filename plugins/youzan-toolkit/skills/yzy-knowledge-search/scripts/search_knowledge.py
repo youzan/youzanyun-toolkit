@@ -11,7 +11,7 @@ import urllib.request
 from typing import Any
 
 
-ENDPOINT = "https://cloud-doc-center.s.qima-inc.com/doc/knowledge/search"
+ENDPOINT = "http://doc.youzanyun.com/api/doc/knowledge/search"
 
 
 def parse_args() -> argparse.Namespace:
