@@ -7,23 +7,20 @@
 从 Git 仓库添加 marketplace，使用方不需要提前 `git clone`，但需要本机已有访问该仓库的权限：
 
 ```bash
-codex plugin marketplace add https://gitlab.qima-inc.com/youzanyun/youzan-toolkit --ref main
-codex plugin add youzan-toolkit@youzan
+codex plugin marketplace add https://gitlab.qima-inc.com/youzanyun/youzan-toolkit --ref main && codex plugin add youzan-toolkit@youzan
 ```
 
 如果使用本地路径安装，才需要先把仓库拉到本机：
 
 ```bash
 git clone https://gitlab.qima-inc.com/youzanyun/youzan-toolkit /path/to/youzan-toolkit
-codex plugin marketplace add /path/to/youzan-toolkit
-codex plugin add youzan-toolkit@youzan
+codex plugin marketplace add /path/to/youzan-toolkit && codex plugin add youzan-toolkit@youzan
 ```
 
 如果本机只配置了 SSH Git 权限，也可以使用：
 
 ```bash
-codex plugin marketplace add git@gitlab.qima-inc.com:youzanyun/youzan-toolkit.git --ref main
-codex plugin add youzan-toolkit@youzan
+codex plugin marketplace add git@gitlab.qima-inc.com:youzanyun/youzan-toolkit.git --ref main && codex plugin add youzan-toolkit@youzan
 ```
 
 安装后新开一个 Codex task，以便加载新插件中的 skills。
@@ -42,13 +39,18 @@ git push
 使用方刷新 marketplace 并重新安装插件：
 
 ```bash
-codex plugin marketplace upgrade youzan
-codex plugin add youzan-toolkit@youzan
+codex plugin marketplace upgrade youzan && codex plugin add youzan-toolkit@youzan
+```
+
+如果已 clone 本仓库，也可以使用封装脚本：
+
+```bash
+./scripts/upgrade_youzan_toolkit.sh
 ```
 
 更新后新开一个 Codex task，以便加载新版本的 skills。
 
-> Codex Git marketplace 当前是刷新式更新：发布方推送新版本，使用方通过 `marketplace upgrade` 拉取，再重新 `plugin add` 安装新版本。
+> Codex Git marketplace 当前是刷新式更新：`marketplace upgrade` 只刷新 marketplace 快照，`plugin add` 才会从快照安装插件版本。Codex CLI 暂未提供“刷新并重新安装”的单个子命令，所以使用方用 shell `&&` 合成一条命令执行。
 
 ## 校验
 
