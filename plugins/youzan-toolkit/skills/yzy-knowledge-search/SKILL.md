@@ -1,40 +1,50 @@
 ---
 name: yzy-knowledge-search
-description: 通过云文档中心搜索接口查询有赞内部知识库。用于回答有赞云、开放平台、开发者接入、开放 API、开放消息、扩展点、定制需求、开发者问题、集成方案、API、工单答疑、开放能力咨询等问题。触发词：知识库检索、查知识库、开放知识库、有赞云知识库、开放平台、开放API、开放 API、开放消息、消息推送、扩展点、定制、定制需求、开发者、开发者接入、集成方案、API 对接、三方对接.
+description: 结合有赞云 llms.txt 文档目录导航和云文档中心搜索接口查询有赞内部知识库。用于回答有赞云、开放平台、开发者接入、开放 API、开放消息、扩展点、定制需求、开发者问题、集成方案、API、工单答疑、开放能力咨询等问题。触发词：知识库检索、查知识库、开放知识库、有赞云知识库、llms.txt、有赞云文档目录、开放平台、开放API、开放 API、开放消息、消息推送、扩展点、定制、定制需求、开发者、开发者接入、集成方案、API 对接、三方对接.
 ---
 
 # 有赞知识库查询
 
 ## 概述
 
-使用有赞云文档中心搜索接口，查询与用户问题相关的内部知识库内容。当答案依赖有赞特定文档、内部实现、业务规则或定制需求背景时，优先查询知识库，不要凭通用经验猜测。
+结合 `https://doc.youzanyun.com/llms.txt` 文档目录导航和有赞云文档中心搜索接口，查询与用户问题相关的开放文档范围和内部知识库内容。当答案依赖有赞特定文档、内部实现、业务规则或定制需求背景时，优先查询知识库，不要凭通用经验猜测。
 
 ## 快速开始
 
 运行内置搜索脚本：
 
 ```bash
-python3 <skill-dir>/scripts/search_knowledge.py "订单接口" --top-k 3
+python3 <skill-dir>/scripts/search_knowledge.py "订单接口" --top-k 5
 ```
+
+脚本默认会同时读取 `llms.txt` 当前目录导航，并在输出中附带匹配模块与候选文档。只想检索知识库时使用 `--no-navigation`。
 
 如果脚本不可用，直接调用接口：
 
 ```bash
 curl -sS -X POST 'http://doc.youzanyun.com/api/doc/knowledge/search' \
   -H 'Content-Type: application/json' \
-  -d '{"query":"订单接口","topK":3}'
+  -d '{"query":"订单接口","topK":5}'
+```
+
+查看有赞云文档目录：
+
+```bash
+curl -sS 'https://doc.youzanyun.com/llms.txt'
 ```
 
 ## 工作流程
 
 1. 将用户意图提炼成简洁的中文查询词。产品名、API 名、标识符、错误信息要保持原样；不要把整段闲聊式用户问题直接作为检索词。
-2. 默认使用 `topK=3` 查询。只有在用户要求更广泛检索，或首轮结果不足时，才提升到 5-10。
-3. 先观察接口响应结构，再做总结。未知字段只能当作来源元信息，不要假设其业务含义。
-4. 先基于检索结果给出结论，不要只贴接口 JSON。
-5. 归纳关键依据；类目路径可用于说明来源范围。
-6. 只基于返回的知识库内容回答，不编造知识库没有返回的事实。
-7. 结果为空、含糊或接口不可用时，明确说明，并建议更精确的查询词。
-8. 如果响应中包含标题、URL、文档 ID 或其他来源标识，回答时一并标注。
+2. 先使用 `llms.txt` 当前目录导航定位可能相关的模块、二级目录和 Markdown 文档范围。
+3. 再默认使用 `topK=5` 查询知识库。只有在用户要求更广泛检索，或首轮结果不足时，才提升到 10-30。
+4. 先观察接口响应结构，再做总结。未知字段只能当作来源元信息，不要假设其业务含义。
+5. 先基于检索结果给出结论，不要只贴接口 JSON。
+6. 归纳关键依据；`llms.txt` 模块和文档链接可用于说明来源范围，知识库结果用于支撑结论。
+7. 回答接口、扩展点、消息、方案类问题时必须有据可循，优先引用原始链接；缺少链接的知识库结果只能作为弱依据。
+8. 只基于返回的知识库内容和目录导航回答，不编造二者没有返回的事实。
+9. 结果为空、含糊或接口不可用时，明确说明，并建议更精确的查询词。
+10. 如果响应中包含标题、URL、文档 ID 或其他来源标识，回答时一并标注。
 
 ## 查询建议
 
@@ -59,6 +69,18 @@ curl -sS -X POST 'http://doc.youzanyun.com/api/doc/knowledge/search' \
 
 ## 接口约定
 
+文档目录：
+
+```text
+GET https://doc.youzanyun.com/llms.txt
+```
+
+目录用途：
+
+- 一级 `llms.txt` 按开发目标和业务领域列出模块。
+- 模块链接指向领域内的 Markdown 摘要目录。
+- 目录导航只用于定位来源范围和候选文档，不替代知识库检索结论。
+
 接口：
 
 ```text
@@ -71,7 +93,7 @@ Content-Type: application/json
 ```json
 {
   "query": "订单接口",
-  "topK": 3
+  "topK": 5
 }
 ```
 
@@ -79,9 +101,20 @@ Content-Type: application/json
 
 使用 `scripts/search_knowledge.py` 执行可复用查询。脚本只接收最终检索词，不在代码里做关键词规整；关键词规整由 Agent 按上述规则完成。脚本默认输出 JSON，便于 Agent 组合调用；遇到 HTTP 或 JSON 错误时以非 0 状态退出。内部服务响应慢时，使用 `--timeout <秒数>` 调整超时时间。
 
+导航参数：
+
+- 默认读取 `https://doc.youzanyun.com/llms.txt`，输出 `navigation.modules` 和模块下 `documents` 候选。
+- 使用 `--no-navigation` 跳过目录导航。
+- 使用 `--navigation-url <url>` 覆盖目录地址。
+- 使用 `--navigation-top-n <数量>` 调整导航候选数量，默认 5。
+- 使用 `--navigation-module-depth <数量>` 控制读取前几个模块的二级目录，默认 3。
+
 输出要求：
 
-- 默认输出归纳后的 JSON，包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources` 等字段，不只返回接口原始 JSON。
+- 默认输出归纳后的 JSON，包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources`、`navigation`、`traceability` 等字段，不只返回接口原始 JSON。
+- `evidence` 中每条知识库结果必须尽量保留 `sourceType`、`sourceUrl`、`url`、`docId` 等来源字段。
+- `traceability.sourceLinks` 汇总知识库原始链接、`llms.txt` 目录链接、模块链接和 Markdown 文档链接，回答时优先引用这些链接。
+- `traceability.missingEvidenceLinks` 中的条目表示缺少原始链接，只能作为弱依据，不能单独支撑关键结论。
 - 面向人类展示时使用 `--format pretty`。
 - 用户明确要求原始结果时使用 `--full-response`，在输出中附带完整接口响应。
 - 不要根据字段名猜测知识库未返回的事实；脚本只能抽取标题、摘要、类目路径、URL、文档 ID 等可见信息。

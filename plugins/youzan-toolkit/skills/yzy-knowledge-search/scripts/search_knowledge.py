@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -12,17 +13,23 @@ from typing import Any
 
 
 ENDPOINT = "http://doc.youzanyun.com/api/doc/knowledge/search"
+LLMS_INDEX_URL = "https://doc.youzanyun.com/llms.txt"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="查询有赞知识库。")
     parser.add_argument("query", help="搜索词，例如：订单接口")
     parser.add_argument("--original-query", help="原始问题，用于记录上下文")
-    parser.add_argument("--top-k", type=int, default=3, help="返回结果数量")
+    parser.add_argument("--top-k", type=int, default=5, help="返回结果数量")
     parser.add_argument("--endpoint", default=ENDPOINT, help="覆盖默认搜索接口地址")
     parser.add_argument("--timeout", type=float, default=30.0, help="请求超时时间，单位秒")
     parser.add_argument("--format", choices=("json", "pretty"), default="json", help="输出格式，默认 json")
     parser.add_argument("--full-response", action="store_true", help="在输出中附带接口完整原始响应")
+    parser.add_argument("--no-navigation", action="store_true", help="不读取 llms.txt 文档导航")
+    parser.add_argument("--navigation-url", default=LLMS_INDEX_URL, help="llms.txt 导航地址")
+    parser.add_argument("--navigation-top-n", type=int, default=5, help="返回导航候选数量")
+    parser.add_argument("--navigation-timeout", type=float, default=5.0, help="导航请求超时时间，单位秒")
+    parser.add_argument("--navigation-module-depth", type=int, default=3, help="读取前 N 个模块的二级目录")
     return parser.parse_args()
 
 
@@ -50,6 +57,94 @@ def truncate(text: str, limit: int = 240) -> str:
     if len(text) <= limit:
         return text
     return text[: limit - 1] + "..."
+
+
+def fetch_text(url: str, timeout: float) -> str:
+    request = urllib.request.Request(url, headers={"Accept": "text/plain, text/markdown, */*"})
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return response.read().decode("utf-8")
+
+
+def parse_markdown_links(markdown: str) -> list[dict[str, str]]:
+    entries = []
+    pattern = re.compile(r"^\s*[-*]\s+\[([^\]]+)\]\(([^)]+)\)\s*(?:[-:：]\s*)?(.*)$")
+    for line in markdown.splitlines():
+        match = pattern.match(line)
+        if not match:
+            continue
+        title, url, summary = match.groups()
+        entries.append(
+            {
+                "title": title.strip(),
+                "url": url.strip(),
+                "summary": summary.strip(),
+            }
+        )
+    return entries
+
+
+def query_terms(text: str) -> set[str]:
+    terms: set[str] = set()
+    for token in re.findall(r"[A-Za-z0-9_.:/-]{2,}|[\u4e00-\u9fff]{2,}", text.lower()):
+        terms.add(token)
+        if re.fullmatch(r"[\u4e00-\u9fff]{3,}", token):
+            terms.update(token[index : index + 2] for index in range(len(token) - 1))
+    return terms
+
+
+def rank_entries(query: str, entries: list[dict[str, str]], limit: int) -> list[dict[str, Any]]:
+    terms = query_terms(query)
+    ranked = []
+    for entry in entries:
+        haystack = f"{entry.get('title', '')} {entry.get('summary', '')}".lower()
+        score = sum(1 for term in terms if term and term in haystack)
+        if query and query.lower() in haystack:
+            score += 5
+        ranked.append({**entry, "score": score})
+    ranked.sort(key=lambda item: (item["score"], item["title"]), reverse=True)
+    if any(item["score"] > 0 for item in ranked):
+        ranked = [item for item in ranked if item["score"] > 0]
+    return ranked[:limit]
+
+
+def build_navigation(
+    query: str,
+    index_url: str,
+    top_n: int,
+    timeout: float,
+    module_depth: int,
+) -> dict[str, Any]:
+    navigation: dict[str, Any] = {
+        "indexUrl": index_url,
+        "modules": [],
+        "limitations": "llms.txt 仅用于定位文档目录范围；最终结论仍需结合知识库检索结果。",
+    }
+    try:
+        index_text = fetch_text(index_url, timeout)
+        modules = rank_entries(query, parse_markdown_links(index_text), top_n)
+    except Exception as exc:  # noqa: BLE001 - surface navigation failure without failing search.
+        navigation["error"] = f"读取导航失败：{exc}"
+        return navigation
+
+    enriched_modules = []
+    for module in modules:
+        enriched = {
+            "title": module["title"],
+            "url": module["url"],
+            "summary": module["summary"],
+            "score": module["score"],
+            "documents": [],
+        }
+        if len(enriched_modules) < module_depth:
+            try:
+                module_text = fetch_text(module["url"], timeout)
+                enriched["documents"] = rank_entries(query, parse_markdown_links(module_text), top_n)
+            except Exception as exc:  # noqa: BLE001
+                enriched["documentError"] = f"读取模块目录失败：{exc}"
+        enriched_modules.append(enriched)
+
+    navigation["modules"] = enriched_modules
+    return navigation
 
 
 def find_result_list(data: Any) -> list[Any]:
@@ -88,10 +183,12 @@ def find_result_list(data: Any) -> list[Any]:
 def normalize_item(item: Any) -> dict[str, str]:
     if not isinstance(item, dict):
         return {
+            "sourceType": "knowledge",
             "title": "",
             "summary": truncate(stringify(item)),
             "categoryPath": "",
             "url": "",
+            "sourceUrl": "",
             "docId": "",
         }
 
@@ -148,11 +245,83 @@ def normalize_item(item: Any) -> dict[str, str]:
         summary = stringify(remaining)
 
     return {
+        "sourceType": "knowledge",
         "title": title,
         "summary": truncate(summary),
         "categoryPath": category_path,
         "url": url,
+        "sourceUrl": url,
         "docId": doc_id,
+    }
+
+
+def append_source_link(links: list[dict[str, str]], seen: set[tuple[str, str]], source: dict[str, str]) -> None:
+    url = source.get("url") or source.get("sourceUrl")
+    title = source.get("title") or source.get("docId") or url
+    if not url:
+        return
+    key = (source.get("sourceType", ""), url)
+    if key in seen:
+        return
+    seen.add(key)
+    links.append(
+        {
+            "sourceType": source.get("sourceType", ""),
+            "title": title,
+            "url": url,
+        }
+    )
+
+
+def build_traceability(evidence: list[dict[str, str]], navigation: dict[str, Any] | None) -> dict[str, Any]:
+    links: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+
+    for item in evidence:
+        append_source_link(links, seen, item)
+
+    if navigation:
+        index_url = navigation.get("indexUrl")
+        if index_url:
+            append_source_link(
+                links,
+                seen,
+                {
+                    "sourceType": "navigation-index",
+                    "title": "有赞云 llms.txt 文档目录",
+                    "url": index_url,
+                },
+            )
+        for module in navigation.get("modules") or []:
+            append_source_link(
+                links,
+                seen,
+                {
+                    "sourceType": "navigation-module",
+                    "title": stringify(module.get("title")),
+                    "url": stringify(module.get("url")),
+                },
+            )
+            for doc in module.get("documents") or []:
+                append_source_link(
+                    links,
+                    seen,
+                    {
+                        "sourceType": "navigation-document",
+                        "title": stringify(doc.get("title")),
+                        "url": stringify(doc.get("url")),
+                    },
+                )
+
+    missing_evidence_links = [
+        item.get("title") or item.get("docId") or item.get("summary", "")[:40]
+        for item in evidence
+        if not item.get("sourceUrl")
+    ]
+    return {
+        "sourceLinks": links,
+        "missingEvidenceLinks": [item for item in missing_evidence_links if item],
+        "limitations": "回答必须引用 sourceLinks 中的原始链接；缺少链接的 evidence 只能作为弱依据。",
     }
 
 
@@ -162,6 +331,7 @@ def build_answer(
     top_k: int,
     data: Any,
     full_response: bool,
+    navigation: dict[str, Any] | None,
 ) -> dict[str, Any]:
     raw_items = find_result_list(data)
     evidence = [normalize_item(item) for item in raw_items[:top_k]]
@@ -176,9 +346,11 @@ def build_answer(
 
     sources = [
         {
+            "sourceType": item["sourceType"],
             "title": item["title"],
             "categoryPath": item["categoryPath"],
             "url": item["url"],
+            "sourceUrl": item["sourceUrl"],
             "docId": item["docId"],
         }
         for item in evidence
@@ -192,6 +364,8 @@ def build_answer(
         "conclusion": conclusion,
         "evidence": evidence,
         "sources": sources,
+        "navigation": navigation,
+        "traceability": build_traceability(evidence, navigation),
         "limitations": "仅基于知识库接口返回内容归纳；未返回的信息不作推断。",
     }
     if full_response:
@@ -218,6 +392,32 @@ def print_pretty(answer: dict[str, Any]) -> None:
                 print(f"   URL：{item['url']}")
             if item.get("docId"):
                 print(f"   文档 ID：{item['docId']}")
+            if not item.get("sourceUrl"):
+                print("   链接状态：缺少原始链接，仅作弱依据")
+    navigation = answer.get("navigation") or {}
+    modules = navigation.get("modules") or []
+    if modules:
+        print("\n目录导航：")
+        for index, module in enumerate(modules, start=1):
+            print(f"{index}. {module['title']} - {module.get('summary', '')}")
+            print(f"   {module['url']}")
+            documents = module.get("documents") or []
+            for doc in documents[:3]:
+                print(f"   - {doc['title']}: {doc.get('url', '')}")
+    elif navigation.get("error"):
+        print(f"\n目录导航：{navigation['error']}")
+    traceability = answer.get("traceability") or {}
+    links = traceability.get("sourceLinks") or []
+    if links:
+        print("\n原始链接：")
+        for index, link in enumerate(links, start=1):
+            print(f"{index}. [{link.get('sourceType', '')}] {link.get('title', '')}")
+            print(f"   {link.get('url', '')}")
+    missing_links = traceability.get("missingEvidenceLinks") or []
+    if missing_links:
+        print("\n缺少原始链接的弱依据：")
+        for item in missing_links:
+            print(f"- {item}")
     print(f"\n限制：{answer['limitations']}")
     if "fullResponse" in answer:
         print("\n原始响应：")
@@ -232,6 +432,15 @@ def main() -> int:
 
     used_query = args.query.strip()
     original_query = (args.original_query or used_query).strip()
+    navigation = None
+    if not args.no_navigation:
+        navigation = build_navigation(
+            used_query,
+            args.navigation_url,
+            args.navigation_top_n,
+            args.navigation_timeout,
+            args.navigation_module_depth,
+        )
     payload = json.dumps({"query": used_query, "topK": args.top_k}, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(
         args.endpoint,
@@ -263,6 +472,7 @@ def main() -> int:
         args.top_k,
         data,
         args.full_response,
+        navigation,
     )
     if args.format == "pretty":
         print_pretty(answer)
