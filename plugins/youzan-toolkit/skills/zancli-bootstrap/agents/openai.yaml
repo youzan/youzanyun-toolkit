@@ -1,0 +1,4 @@
+interface:
+  display_name: "zancli 环境与登录"
+  short_description: "安装 zancli 并校验有赞内部登录态"
+  default_prompt: "使用 $zancli-bootstrap 检查 zancli 安装和登录状态。"

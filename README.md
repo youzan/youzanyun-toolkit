@@ -4,26 +4,46 @@
 
 ## 安装
 
-从 Git 仓库添加 marketplace，使用方不需要提前 `git clone`，但需要本机已有访问该仓库的权限：
+选择一种安装方式即可：
+
+- 使用发布版：从 Git 仓库添加 marketplace，不需要提前 `git clone`，但需要本机已有访问该仓库的权限。
+- 本地测试：先 clone 本仓库，再运行 `./install.sh` 安装当前工作区内容。
+
+### 发布版安装
+
+HTTPS Git 权限可用时：
 
 ```bash
 codex plugin marketplace add https://gitlab.qima-inc.com/youzanyun/youzan-toolkit --ref main && codex plugin add youzan-toolkit@youzan
 ```
 
-如果使用本地路径安装，才需要先把仓库拉到本机：
-
-```bash
-git clone https://gitlab.qima-inc.com/youzanyun/youzan-toolkit /path/to/youzan-toolkit
-codex plugin marketplace add /path/to/youzan-toolkit && codex plugin add youzan-toolkit@youzan
-```
-
-如果本机只配置了 SSH Git 权限，也可以使用：
+如果本机只配置了 SSH Git 权限：
 
 ```bash
 codex plugin marketplace add git@gitlab.qima-inc.com:youzanyun/youzan-toolkit.git --ref main && codex plugin add youzan-toolkit@youzan
 ```
 
-安装后新开一个 Codex task，以便加载新插件中的 skills。
+### 本地测试安装
+
+用于拉取代码后测试本地插件和 skill 改动：
+
+```bash
+git clone https://gitlab.qima-inc.com/youzanyun/youzan-toolkit /path/to/youzan-toolkit
+cd /path/to/youzan-toolkit
+./install.sh
+```
+
+安装后新开一个 Codex task，以便加载新插件中的 skills。需要调用 `zancli` 或访问依赖其登录态的内部能力时，`zancli-bootstrap` skill 会先安装内测版、校验登录态，并在需要时提示用户完成浏览器 OAuth 登录。执行 `pipeline`、`capability`、`log`、`trace` 或 `rds` 应用级操作时，`zancli-app-context` skill 会先解析并校验目标应用；发布和数据库写操作还会要求确认应用与环境。`zancli-pipeline` skill 负责查询构建计划、触发发布和查看构建状态或日志。
+
+也可以在使用插件前手动完成安装和登录：
+
+```bash
+curl -fsSL https://download.qima-inc.com/files/ops-assets/zancli/install.sh | bash
+export PATH="$HOME/.local/bin:$PATH"
+zancli --version
+zancli login
+zancli whoami
+```
 
 ## 更新
 
