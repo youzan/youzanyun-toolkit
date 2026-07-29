@@ -33,6 +33,13 @@ def context_value(context: dict[str, Any], *names: str) -> Any:
     return None
 
 
+def unwrap_context_response(response: dict[str, Any]) -> dict[str, Any]:
+    data = response.get("data")
+    if response.get("success") is True and isinstance(data, dict):
+        return data
+    return response
+
+
 def main() -> None:
     args = parse_args()
     skill_dir = Path(__file__).resolve().parent.parent
@@ -68,9 +75,11 @@ def main() -> None:
     if not isinstance(context, dict):
         raise SystemExit("zancli app context must return a JSON object.")
 
-    app_id = context_value(context, "appId")
-    app_name = context_value(context, "appName")
-    environment = context_value(context, "env", "environment")
+    resolved_context = unwrap_context_response(context)
+
+    app_id = context_value(resolved_context, "appId")
+    app_name = context_value(resolved_context, "appName")
+    environment = context_value(resolved_context, "env", "environment")
     if app_id is None or app_name is None or environment is None:
         raise SystemExit("Application context is incomplete: appId, appName, and environment are required.")
     if args.expected_app_id and str(app_id) != args.expected_app_id:
@@ -82,7 +91,7 @@ def main() -> None:
             f"Resolved environment {environment} does not match expected environment {args.expected_env}."
         )
 
-    json.dump(context, sys.stdout, ensure_ascii=False, indent=2)
+    json.dump(resolved_context, sys.stdout, ensure_ascii=False, indent=2)
     sys.stdout.write("\n")
 
 

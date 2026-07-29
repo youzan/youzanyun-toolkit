@@ -66,8 +66,12 @@ elif "$CHECK_ONLY"; then
   echo "zancli is not logged in. Run zancli login and try again." >&2
   exit 1
 else
-  echo "zancli login is required. Complete the browser OAuth flow to continue."
-  "$ZANCLI_PATH" login
+  echo "zancli login is required. Complete the browser OAuth flow to continue." >&2
+  if [[ -r /dev/tty ]]; then
+    "$ZANCLI_PATH" login </dev/tty >&2
+  else
+    "$ZANCLI_PATH" login >&2
+  fi
   "$ZANCLI_PATH" whoami >/dev/null
   echo "zancli login verified." >&2
 fi
