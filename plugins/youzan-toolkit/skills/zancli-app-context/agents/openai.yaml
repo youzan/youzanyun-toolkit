@@ -1,0 +1,4 @@
+interface:
+  display_name: "zancli 应用上下文"
+  short_description: "在应用级操作前解析并校验目标应用"
+  default_prompt: "使用 $zancli-app-context 确认当前目录对应的应用上下文。"
