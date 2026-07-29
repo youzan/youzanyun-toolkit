@@ -1,21 +1,24 @@
 {
   "name": "youzan-toolkit",
-  "version": "0.1.0+codex.release-20260724073146",
-  "description": "Youzan internal Codex toolkit for knowledge lookup and customized demand development.",
+  "version": "0.2.0+codex.yzy-integration",
+  "description": "Youzan Codex toolkit for open-platform development, project bootstrap, browser debugging and internal operations.",
   "author": {
     "name": "Youzan"
   },
   "keywords": [
     "youzan",
-    "knowledge",
-    "customization",
+    "open-platform",
+    "frontend",
+    "backend",
+    "browser-debug",
+    "zancli",
     "codex"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Youzan Toolkit",
-    "shortDescription": "\u6709\u8d5e\u5185\u90e8\u77e5\u8bc6\u5e93\u4e0e\u5b9a\u5236\u5f00\u53d1\u8f85\u52a9\u5de5\u5177",
-    "longDescription": "\u63d0\u4f9b\u6709\u8d5e\u5185\u90e8\u77e5\u8bc6\u5e93\u68c0\u7d22\u3001\u5b9a\u5236\u9700\u6c42\u5f00\u53d1\u4e0a\u4e0b\u6587\u548c\u540e\u7eed\u53ef\u6269\u5c55\u7684 Codex skills\u3002",
+    "shortDescription": "有赞云开放开发、浏览器调试与内部运维工具集",
+    "longDescription": "统一提供有赞云项目初始化、前后端开放开发、浏览器调试、开放平台状态查询、知识检索与 zancli 内部运维能力。",
     "developerName": "Youzan",
     "category": "Productivity",
     "capabilities": [
@@ -24,9 +27,9 @@
       "Interactive"
     ],
     "defaultPrompt": [
-      "\u67e5\u8be2\u6709\u8d5e\u77e5\u8bc6\u5e93\u91cc\u7684\u8ba2\u5355\u63a5\u53e3\u8bf4\u660e",
-      "\u68c0\u7d22\u4f18\u60e0\u5238\u53e0\u52a0\u76f8\u5173\u77e5\u8bc6",
-      "\u67e5\u627e\u5b9a\u5236\u9700\u6c42\u5f00\u53d1\u80cc\u666f\u8d44\u6599"
+      "初始化一个有赞云开放项目并启动本地开发",
+      "排查当前有赞云页面为什么没有渲染本地代码",
+      "查询当前应用的开放能力并实现对应需求"
     ],
     "brandColor": "#2563EB"
   }

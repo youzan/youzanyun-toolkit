@@ -1,0 +1,4 @@
+interface:
+  display_name: "YZY 浏览器调试"
+  short_description: "读取页面 Console Network 和 DOM 完成调试闭环"
+  default_prompt: "使用 $yzy-browser-debug 排查当前有赞云页面的本地渲染问题。"
