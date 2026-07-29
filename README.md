@@ -2,6 +2,24 @@
 
 有赞内部 Codex 插件市场。Codex marketplace manifest 位于 `.agents/plugins/marketplace.json`，插件源码放在 `plugins/` 下。
 
+## 当前能力
+
+当前仓库提供的是面向有赞内部场景的 Codex 工具入口，主要能力如下：
+
+- `zancli-bootstrap`：安装或校验 `zancli`，并在需要时完成登录。
+- `zancli-app-context`：解析并校验应用上下文，作为应用级操作前置检查。
+- `zancli-pipeline`：查询构建计划、触发 pipeline、查看构建状态与日志。
+- `zancli-log-trace`：检索应用日志、统计日志、展开上下文、按 `traceId` 汇总链路。
+- `zancli-rds`：查询和操作应用绑定的 RDS 数据库，包括表、结构、DDL 和 DML。
+- `zancli-api-capability`：查询和预检有赞云开放 API 能力包授权。
+- `yzy-knowledge-search`：检索有赞云文档与内部知识库，辅助回答开放平台、API、扩展点、定制需求等问题。
+
+另外还提供配套脚本，用于发布、升级和校验插件：
+
+- `scripts/release_youzan_toolkit.sh`
+- `scripts/upgrade_youzan_toolkit.sh`
+- `scripts/validate_plugins.sh`
+
 ## 安装
 
 选择一种安装方式即可：
