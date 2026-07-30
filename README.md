@@ -6,21 +6,18 @@
 
 ### 有赞云开放开发
 
-- `yzy-bootstrap`：使用 YZY CLI 初始化项目和本地开发环境。
-- `youzan-frontend-open-dev`：按开放能力约束开发 H5、小程序和商家端页面。
-- `youzan-backend-open-dev`：开发开放 API、消息和后端扩展点。
-- `youzan-open-platform`：只读查询当前应用的类目、能力包和 API 权限。
+- `yzy-project-bootstrap`：初始化有赞云开放项目和本地开发环境。
+- `yzy-frontend-dev`：按开放能力约束开发 H5、小程序和商家端页面。
 - `yzy-browser-debug`：通过项目内 `yzy-debug` 读取 Console、Network 和 DOM。
 - `yzy-knowledge-search`：检索有赞云文档目录与知识库。
 
 ### 有赞内部工程工具
 
-- `zancli-bootstrap`：安装、校验和登录 `zancli`。
-- `zancli-app-context`：解析应用上下文。
-- `zancli-pipeline`：查询和触发构建计划。
-- `zancli-log-trace`：查询日志和 Trace。
-- `zancli-rds`：查询和操作应用绑定的 RDS。
-- `zancli-api-capability`：查询开放 API 能力包授权。
+- `yzy-app-context`：解析应用上下文。
+- `yzy-pipeline`：查询和触发构建计划。
+- `yzy-log-trace`：查询日志和 Trace。
+- `yzy-rds`：查询和操作应用绑定的 RDS。
+- `yzy-api-capability`：查询开放 API 能力包授权。
 
 ## 制品边界
 

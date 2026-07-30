@@ -1,4 +1,0 @@
-interface:
-  display_name: "YZY 项目初始化"
-  short_description: "初始化有赞云项目并准备本地开放开发环境"
-  default_prompt: "使用 $yzy-bootstrap 初始化一个有赞云开放项目并启动本地开发。"

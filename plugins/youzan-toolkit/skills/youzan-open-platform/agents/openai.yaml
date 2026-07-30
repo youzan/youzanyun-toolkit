@@ -1,4 +1,0 @@
-interface:
-  display_name: "有赞云开放平台状态"
-  short_description: "查询当前应用的类目能力包与 API 权限"
-  default_prompt: "使用 $youzan-open-platform 查询当前应用已有的开放能力。"

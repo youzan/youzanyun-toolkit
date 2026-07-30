@@ -53,7 +53,24 @@ fi
 
 "$ROOT_DIR/scripts/validate_plugins.sh"
 
-codex plugin marketplace add "$ROOT_DIR"
+EXISTING_MARKETPLACE_ROOT="$(
+  codex plugin marketplace list |
+    awk -v marketplace="$MARKETPLACE" '$1 == marketplace { print $2; exit }'
+)"
+
+if [[ -n "$EXISTING_MARKETPLACE_ROOT" ]]; then
+  if [[ "$EXISTING_MARKETPLACE_ROOT" == "$ROOT_DIR" ]]; then
+    echo "Marketplace $MARKETPLACE already points to $ROOT_DIR."
+  else
+    echo "Marketplace $MARKETPLACE already points to $EXISTING_MARKETPLACE_ROOT."
+    echo "Replacing it with local checkout $ROOT_DIR."
+    codex plugin marketplace remove "$MARKETPLACE"
+    codex plugin marketplace add "$ROOT_DIR"
+  fi
+else
+  codex plugin marketplace add "$ROOT_DIR"
+fi
+
 codex plugin add "$PLUGIN@$MARKETPLACE"
 
 cat <<EOF

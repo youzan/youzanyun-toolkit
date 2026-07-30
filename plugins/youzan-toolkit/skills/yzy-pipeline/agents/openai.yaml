@@ -1,0 +1,4 @@
+interface:
+  display_name: "YZY 应用发布"
+  short_description: "基于应用上下文查询计划确认目标并安全触发构建发布任务"
+  default_prompt: "使用 $yzy-pipeline 查询当前应用可用的构建计划。"

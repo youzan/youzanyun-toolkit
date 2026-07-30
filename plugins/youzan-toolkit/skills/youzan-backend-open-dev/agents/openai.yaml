@@ -1,4 +1,0 @@
-interface:
-  display_name: "有赞云后端开放开发"
-  short_description: "按官方契约开发有赞云 API 消息与扩展点"
-  default_prompt: "使用 $youzan-backend-open-dev 实现当前项目的后端开放需求。"

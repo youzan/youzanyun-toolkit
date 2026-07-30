@@ -1,4 +1,0 @@
-interface:
-  display_name: "有赞云前端开放开发"
-  short_description: "按开放能力约束开发和调试有赞云前端页面"
-  default_prompt: "使用 $youzan-frontend-open-dev 实现当前项目的前端开放需求。"
