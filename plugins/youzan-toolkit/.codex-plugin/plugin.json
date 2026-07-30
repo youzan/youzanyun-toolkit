@@ -1,21 +1,24 @@
 {
   "name": "youzan-toolkit",
-  "version": "0.1.0+codex.release-20260724073146",
-  "description": "Youzan internal Codex toolkit for knowledge lookup and customized demand development.",
+  "version": "0.2.0+codex.release-20260730021508",
+  "description": "Youzan Codex toolkit for open-platform development, project bootstrap, browser debugging and internal operations.",
   "author": {
     "name": "Youzan"
   },
   "keywords": [
     "youzan",
-    "knowledge",
-    "customization",
+    "open-platform",
+    "frontend",
+    "backend",
+    "browser-debug",
+    "yzy",
     "codex"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Youzan Toolkit",
-    "shortDescription": "\u6709\u8d5e\u5185\u90e8\u77e5\u8bc6\u5e93\u4e0e\u5b9a\u5236\u5f00\u53d1\u8f85\u52a9\u5de5\u5177",
-    "longDescription": "\u63d0\u4f9b\u6709\u8d5e\u5185\u90e8\u77e5\u8bc6\u5e93\u68c0\u7d22\u3001\u5b9a\u5236\u9700\u6c42\u5f00\u53d1\u4e0a\u4e0b\u6587\u548c\u540e\u7eed\u53ef\u6269\u5c55\u7684 Codex skills\u3002",
+    "shortDescription": "\u6709\u8d5e\u4e91\u5f00\u653e\u5f00\u53d1\u3001\u6d4f\u89c8\u5668\u8c03\u8bd5\u4e0e\u5185\u90e8\u8fd0\u7ef4\u5de5\u5177\u96c6",
+    "longDescription": "\u7edf\u4e00\u63d0\u4f9b\u6709\u8d5e\u4e91\u9879\u76ee\u521d\u59cb\u5316\u3001\u524d\u7aef\u5f00\u653e\u5f00\u53d1\u3001\u6d4f\u89c8\u5668\u8c03\u8bd5\u3001\u5f00\u653e\u5e73\u53f0\u72b6\u6001\u67e5\u8be2\u3001\u77e5\u8bc6\u68c0\u7d22\u4e0e\u5185\u90e8\u5de5\u7a0b\u80fd\u529b\u3002",
     "developerName": "Youzan",
     "category": "Productivity",
     "capabilities": [
@@ -24,9 +27,9 @@
       "Interactive"
     ],
     "defaultPrompt": [
-      "\u67e5\u8be2\u6709\u8d5e\u77e5\u8bc6\u5e93\u91cc\u7684\u8ba2\u5355\u63a5\u53e3\u8bf4\u660e",
-      "\u68c0\u7d22\u4f18\u60e0\u5238\u53e0\u52a0\u76f8\u5173\u77e5\u8bc6",
-      "\u67e5\u627e\u5b9a\u5236\u9700\u6c42\u5f00\u53d1\u80cc\u666f\u8d44\u6599"
+      "\u521d\u59cb\u5316\u4e00\u4e2a\u6709\u8d5e\u4e91\u5f00\u653e\u9879\u76ee\u5e76\u542f\u52a8\u672c\u5730\u5f00\u53d1",
+      "\u6392\u67e5\u5f53\u524d\u6709\u8d5e\u4e91\u9875\u9762\u4e3a\u4ec0\u4e48\u6ca1\u6709\u6e32\u67d3\u672c\u5730\u4ee3\u7801",
+      "\u67e5\u8be2\u5f53\u524d\u5e94\u7528\u7684\u5f00\u653e\u80fd\u529b\u5e76\u5b9e\u73b0\u5bf9\u5e94\u9700\u6c42"
     ],
     "brandColor": "#2563EB"
   }

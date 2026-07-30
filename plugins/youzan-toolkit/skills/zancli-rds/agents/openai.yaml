@@ -1,4 +1,0 @@
-interface:
-  display_name: "zancli Rds"
-  short_description: "查询和操作有赞应用绑定的 RDS 数据库"
-  default_prompt: "使用 $zancli-rds 查询当前应用的数据库、表或表结构。"

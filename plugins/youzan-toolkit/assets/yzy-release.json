@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-29",
+  "cli": {
+    "package": "@youzan-cloud/cli",
+    "channel": "beta",
+    "testedVersion": "0.1.15-beta.20260729160626.0",
+    "registry": "http://registry.npm.qima-inc.com",
+    "command": "npx --yes --registry=http://registry.npm.qima-inc.com @youzan-cloud/cli@beta"
+  },
+  "runtime": {
+    "package": "@youzan-cloud/browser-runtime",
+    "channel": "beta",
+    "testedVersion": "0.1.38-beta.20260729155820.0",
+    "registry": "http://registry.npm.qima-inc.com",
+    "installScope": "frontend repository root devDependency"
+  },
+  "extension": {
+    "name": "YZY Browser Developer Tool",
+    "minimumVersion": "0.3.5",
+    "downloadUrl": "https://file.yzcdn.cn/upload_files/yz-file/2026/07/24/FhjoenP6J_61fHVtUvv8KgxZiuM8.zip"
+  },
+  "template": {
+    "repository": "https://gitlab.qima-inc.com/chenfeiyu/cloud-ui-v2.git",
+    "purpose": "Youzan Cloud frontend open 2.0 template"
+  }
+}

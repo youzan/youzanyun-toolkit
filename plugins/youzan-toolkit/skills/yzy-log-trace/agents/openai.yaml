@@ -1,0 +1,4 @@
+interface:
+  display_name: "YZY 日志与链路"
+  short_description: "查询有赞应用日志与链路追踪"
+  default_prompt: "使用 $yzy-log-trace 查询日志、计数、上下文或 trace。"

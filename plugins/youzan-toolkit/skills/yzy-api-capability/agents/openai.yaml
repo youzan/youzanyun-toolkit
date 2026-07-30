@@ -1,0 +1,4 @@
+interface:
+  display_name: "YZY API 能力包"
+  short_description: "查询和预检有赞云开放 API 能力包授权"
+  default_prompt: "使用 $yzy-api-capability 检查当前应用的 API 能力包和 API 授权。"
