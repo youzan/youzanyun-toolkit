@@ -1,17 +1,17 @@
 ---
 name: yzy-project-bootstrap
-description: 初始化有赞云开放项目。用于完成项目获取、登录和选择应用、安装 AI Skills、检查浏览器插件、初始化前端开放 2.0 工程、启动 H5/小程序/商家端 dev，或排查项目首次启动流程。
+description: 初始化有赞云开放工程。用于完成工程获取、登录和选择应用、安装 AI Skills、检查浏览器插件、初始化前端开放 2.0 工程、启动 H5/小程序/商家端 dev，或排查工程首次启动流程。
 ---
 
-# 有赞云项目初始化
+# YZY 有赞云工程初始化
 
 ## 目标
 
-使用官方 YZY CLI 完成项目获取和本地开发初始化。不要手工拼装应用上下文、复制 Runtime 源码或绕过插件检测。
+使用官方 YZY CLI 完成工程获取和本地开发初始化。不要手工拼装应用上下文、复制 Runtime 源码或绕过插件检测。
 
-## 新项目
+## 新工程
 
-在计划存放项目的父目录执行：
+在计划存放工程的父目录执行：
 
 ```bash
 npx --yes --registry=http://registry.npm.qima-inc.com @youzan-cloud/cli@beta
@@ -21,7 +21,7 @@ npx --yes --registry=http://registry.npm.qima-inc.com @youzan-cloud/cli@beta
 
 不要在初始化完成后重复运行仓库内底层 `yzc` 命令。开发和构建应使用生成仓库根目录 `package.json` 暴露的命令。
 
-## 已有项目
+## 已有工程
 
 1. 先阅读仓库根目录的 `AGENTS.md`、`README.md` 和 `package.json`。
 2. 如果仓库已有前端开放 2.0 目录和脚本，直接使用其 `dev:*` 或 `build:*` 命令。
@@ -32,7 +32,7 @@ npx --yes --registry=http://registry.npm.qima-inc.com @youzan-cloud/cli@beta
 
 读取相对本 Skill 的 `../../assets/yzy-release.json` 获取当前发布渠道和安装地址：
 
-- `@youzan-cloud/cli`：项目初始化入口，独立 npm 包。
+- `@youzan-cloud/cli`：工程初始化入口，独立 npm 包。
 - `@youzan-cloud/browser-runtime`：仓库根目录开发依赖，由模板或 CLI 安装并锁定具体版本。
 - YZY Browser Developer Tool：独立 Chrome 扩展，不把扩展源码复制到业务仓库。
 - `cloud-ui-v2`：前端开放 2.0 模板，不作为 Skill 内容分发。

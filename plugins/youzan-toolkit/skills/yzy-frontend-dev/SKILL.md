@@ -3,7 +3,7 @@ name: yzy-frontend-dev
 description: 辅助有赞云前端开放开发。用于页面定制、UI 改造、Slot、Data、Method、Hook、Event、H5、消费者端小程序、商家端页面扩展、开放场景定位、前端代码实现和构建调试规则。
 ---
 
-# 有赞云前端开放开发
+# YZY 前端开放规范
 
 ## 原则
 
