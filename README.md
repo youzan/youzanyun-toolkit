@@ -4,15 +4,12 @@
 
 ## 能力
 
-### 有赞云开放开发
+### 有赞云开放开发与工程工具
 
 - `yzy-project-bootstrap`：初始化有赞云开放项目和本地开发环境。
 - `yzy-frontend-dev`：按开放能力约束开发 H5、小程序和商家端页面。
 - `yzy-browser-debug`：通过项目内 `yzy-debug` 读取 Console、Network 和 DOM。
 - `yzy-knowledge-search`：检索有赞云文档目录与知识库。
-
-### 有赞内部工程工具
-
 - `yzy-app-context`：解析应用上下文。
 - `yzy-pipeline`：查询和触发构建计划。
 - `yzy-log-trace`：查询日志和 Trace。
