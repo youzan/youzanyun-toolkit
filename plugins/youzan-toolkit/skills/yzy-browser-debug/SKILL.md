@@ -3,7 +3,7 @@ name: yzy-browser-debug
 description: 调试和验证本地运行的有赞云 H5 或商家端页面。用于 Slot 不渲染、Console 报错、Network 请求或响应异常、DOM 状态、热更新、页面连接，以及通过项目内 yzy-debug 完成修改刷新复验闭环。
 ---
 
-# 有赞云浏览器调试
+# YZY 浏览器调试
 
 ## 定位项目
 
