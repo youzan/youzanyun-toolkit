@@ -46,6 +46,52 @@ curl -sS 'https://doc.youzanyun.com/llms.txt'
 9. 结果为空、含糊或接口不可用时，明确说明，并建议更精确的查询词。
 10. 如果响应中包含标题、URL、文档 ID 或其他来源标识，回答时一并标注。
 
+## 内容有效性与时效判断
+
+检索结果不是都能直接作为最终推荐方案，必须先做内容有效性筛选，并在同一章内处理输出内容和格式要求。
+
+### 内容有效性规则
+
+1. 如果结果中出现以下标记，不可作为最终推荐方案：
+   - 已弃用
+   - 已废弃
+   - 已下线
+   - 即将下线
+   - 不推荐使用
+   - 不推荐新接入使用
+   - 仅历史兼容
+   - 只维护不迭代
+   - 不再维护
+   - 请改用 xxx
+   - 推荐使用 xxx
+   - 已迁移至 xxx
+   - 新接入开发者请使用 xxx
+2. 如果结果明确给出了替代方案，应继续检索替代方案，并优先用替代方案文档回答。
+3. 回答中的能力名称、接口名称、参数、示例、限制条件、操作步骤和参考文档，都必须以替代方案文档为准。
+4. 历史兼容或背景说明可以简述，但不能作为新接入推荐。
+
+### 公告时效规则
+
+公告、通知、上线说明、变更通知、临时说明、活动说明、维护通知等内容，必须额外判断时效：
+
+1. 默认只在发布时间起 2 个月内视为可作为当前结论依据。
+2. 超过 2 个月且没有明确长期有效说明的公告，只能作为历史背景。
+3. 当前问题必须依赖公告判断，但只检索到过期公告时，应继续查正式文档或更新说明。
+
+### 输出内容要求
+
+4. 回答中返回 `sourceUrl` 前必须先访问验证；只有 HTTP 状态为 2xx 时，才返回该 `sourceUrl`。
+5. 默认输出归纳后的 JSON，包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources`、`navigation`、`traceability` 等字段，不只返回接口原始 JSON。
+6. `evidence` 中每条知识库结果必须尽量保留 `sourceType`、`sourceUrl`、`url`、`docId` 等来源字段。
+7. `traceability.sourceLinks` 汇总知识库原始链接、`llms.txt` 目录链接、模块链接和 Markdown 文档链接，回答时优先引用这些链接。
+8. `traceability.missingEvidenceLinks` 中的条目表示缺少原始链接，只能作为弱依据，不能单独支撑关键结论。
+9. 不要根据字段名猜测知识库未返回的事实；脚本只能抽取标题、摘要、类目路径、URL、文档 ID 等可见信息。
+
+### 输出格式要求
+
+1. 面向人类展示时使用 `--format pretty`。
+2. 用户明确要求原始结果时使用 `--full-response`，在输出中附带完整接口响应。
+
 ## 查询建议
 
 - 优先使用短查询词和核心名词：`订单接口`、`优惠券叠加`、`定制需求 购物车`、`商品同步 API`、`开放消息`、`扩展点`、`集成方案`。
@@ -101,6 +147,12 @@ Content-Type: application/json
 
 使用 `scripts/search_knowledge.py` 执行可复用查询。脚本只接收最终检索词，不在代码里做关键词规整；关键词规整由 Agent 按上述规则完成。脚本默认输出 JSON，便于 Agent 组合调用；遇到 HTTP 或 JSON 错误时以非 0 状态退出。内部服务响应慢时，使用 `--timeout <秒数>` 调整超时时间。
 
+脚本会对结果做基础筛选：
+
+- 命中弃用/废弃/下线/不推荐/只维护不迭代等标记的结果会被排除出最终推荐。
+- 如果结果包含明确替代方案，脚本会优先尝试继续检索替代方案。
+- 过期公告只保留为背景线索，不进入最终推荐集。
+
 导航参数：
 
 - 默认读取 `https://doc.youzanyun.com/llms.txt`，输出 `navigation.modules` 和模块下 `documents` 候选。
@@ -108,13 +160,3 @@ Content-Type: application/json
 - 使用 `--navigation-url <url>` 覆盖目录地址。
 - 使用 `--navigation-top-n <数量>` 调整导航候选数量，默认 5。
 - 使用 `--navigation-module-depth <数量>` 控制读取前几个模块的二级目录，默认 3。
-
-输出要求：
-
-- 默认输出归纳后的 JSON，包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources`、`navigation`、`traceability` 等字段，不只返回接口原始 JSON。
-- `evidence` 中每条知识库结果必须尽量保留 `sourceType`、`sourceUrl`、`url`、`docId` 等来源字段。
-- `traceability.sourceLinks` 汇总知识库原始链接、`llms.txt` 目录链接、模块链接和 Markdown 文档链接，回答时优先引用这些链接。
-- `traceability.missingEvidenceLinks` 中的条目表示缺少原始链接，只能作为弱依据，不能单独支撑关键结论。
-- 面向人类展示时使用 `--format pretty`。
-- 用户明确要求原始结果时使用 `--full-response`，在输出中附带完整接口响应。
-- 不要根据字段名猜测知识库未返回的事实；脚本只能抽取标题、摘要、类目路径、URL、文档 ID 等可见信息。
