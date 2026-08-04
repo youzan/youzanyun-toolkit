@@ -7,6 +7,7 @@ SKILL_VALIDATOR="${CODEX_SKILL_VALIDATOR:-$HOME/.codex/skills/.system/skill-crea
 PLUGIN_DIR="$ROOT_DIR/plugins/youzan-toolkit"
 
 python3 "$VALIDATOR" "$PLUGIN_DIR"
+python3 "$ROOT_DIR/scripts/validate_yzy_release.py" "$PLUGIN_DIR/assets/yzy-release.json"
 
 for skill_dir in "$PLUGIN_DIR"/skills/*; do
   [[ -d "$skill_dir" ]] || continue

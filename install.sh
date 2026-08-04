@@ -5,20 +5,22 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MARKETPLACE="${MARKETPLACE:-youzan}"
-PLUGIN="${PLUGIN:-youzan-toolkit}"
+PLUGIN="${PLUGIN:-youzanyun-toolkit}"
+PLUGIN_DIR="${PLUGIN_DIR:-$ROOT_DIR/plugins/youzan-toolkit}"
 
 usage() {
   cat <<'EOF'
 Usage:
   ./install.sh
 
-Install youzan-toolkit from this local checkout for development testing.
+Install youzanyun-toolkit from this local checkout for development testing.
 Use this instead of the Git marketplace install when you want Codex to load
 local plugin or skill changes before publishing.
 
 Environment:
   MARKETPLACE  Marketplace name to install from. Defaults to youzan.
-  PLUGIN       Plugin name to install. Defaults to youzan-toolkit.
+  PLUGIN       Plugin name to install. Defaults to youzanyun-toolkit.
+  PLUGIN_DIR   Plugin directory to validate. Defaults to plugins/youzan-toolkit.
 EOF
 }
 
@@ -46,8 +48,8 @@ if [[ ! -f "$ROOT_DIR/marketplace.json" ]]; then
   exit 1
 fi
 
-if [[ ! -d "$ROOT_DIR/plugins/$PLUGIN" ]]; then
-  echo "Missing plugin directory: $ROOT_DIR/plugins/$PLUGIN." >&2
+if [[ ! -d "$PLUGIN_DIR" ]]; then
+  echo "Missing plugin directory: $PLUGIN_DIR." >&2
   exit 1
 fi
 

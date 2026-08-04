@@ -21,6 +21,8 @@ npx --yes --registry=http://registry.npm.qima-inc.com @youzan-cloud/cli@beta
 
 不要在初始化完成后重复运行仓库内底层 `yzc` 命令。开发和构建应使用生成仓库根目录 `package.json` 暴露的命令。
 
+CLI 的实际兼容检查是浏览器扩展最低版本的判定源。涉及 H5 或商家端调试时，优先运行上述官方 CLI 流程或 CLI 给出的版本检查；如果 CLI 提示扩展版本过低，以 CLI 报出的最低版本为准，不要只依据 Toolkit 静态清单判断登录、工程或 Runtime 是否兼容。
+
 ## 已有工程
 
 1. 先阅读仓库根目录的 `AGENTS.md`、`README.md` 和 `package.json`。
@@ -41,7 +43,7 @@ npx --yes --registry=http://registry.npm.qima-inc.com @youzan-cloud/cli@beta
 
 ## 启动与排错
 
-- 插件未安装或版本过低：使用版本清单中的下载地址安装或更新，再重新运行 CLI。
+- 插件未安装或版本过低：先执行 CLI 版本检查；确认需要升级后，再使用版本清单中的下载地址安装或更新，并重新运行 CLI。清单里的 `minimumVersion` 只记录发布时已校验门槛，若与 CLI 提示冲突，以 CLI 为准。
 - dev 等待应用：优先确认 YZY CLI 是否已经生成应用上下文，不要再次手工选择另一个应用。
 - H5、消费者端小程序和商家后台需要并行开发时，使用 CLI 或仓库提供的并行启动流程，不要让多个 Runtime 争用同一固定端口。
 - 页面未渲染本地代码：使用 `yzy-browser-debug` 检查 Runtime、页面连接和真实浏览器证据。
