@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "youzan-toolkit",
+      "name": "youzanyun-toolkit",
       "source": {
         "source": "local",
         "path": "./plugins/youzan-toolkit"

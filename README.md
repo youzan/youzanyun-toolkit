@@ -2,6 +2,8 @@
 
 有赞 Codex 插件市场。Marketplace 清单位于 `.agents/plugins/marketplace.json`，插件源码位于 `plugins/`。
 
+对外开发者安装和使用流程见 [Youzanyun Toolkit 对外开发者使用文档](docs/youzan-toolkit-install-usage.md)。
+
 ## 能力
 
 ### 有赞云开放开发与工程工具
@@ -18,7 +20,7 @@
 
 ## 制品边界
 
-Youzan Toolkit 是 AI 开发入口，不承载其他产品源码：
+Youzanyun Toolkit 是 AI 开发入口，不承载其他产品源码：
 
 | 制品 | 发布方式 | Toolkit 的职责 |
 |---|---|---|
@@ -38,14 +40,14 @@ HTTPS：
 
 ```bash
 codex plugin marketplace add https://gitlab.qima-inc.com/youzanyun/youzan-toolkit --ref main
-codex plugin add youzan-toolkit@youzan
+codex plugin add youzanyun-toolkit@youzan
 ```
 
 SSH：
 
 ```bash
 codex plugin marketplace add git@gitlab.qima-inc.com:youzanyun/youzan-toolkit.git --ref main
-codex plugin add youzan-toolkit@youzan
+codex plugin add youzanyun-toolkit@youzan
 ```
 
 本地开发：
@@ -67,14 +69,14 @@ cd /path/to/youzan-toolkit
 ```bash
 ./scripts/release_youzan_toolkit.sh
 git add marketplace.json plugins scripts README.md
-git commit -m "Release youzan-toolkit plugin"
+git commit -m "Release youzanyun-toolkit plugin"
 git push
 ```
 
 使用方更新：
 
 ```bash
-codex plugin marketplace upgrade youzan && codex plugin add youzan-toolkit@youzan
+codex plugin marketplace upgrade youzan && codex plugin add youzanyun-toolkit@youzan
 ```
 
 已 clone 仓库时也可以运行：

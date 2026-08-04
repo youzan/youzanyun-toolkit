@@ -1,6 +1,6 @@
 {
-  "name": "youzan-toolkit",
-  "version": "0.2.0+codex.release-20260730023648",
+  "name": "youzanyun-toolkit",
+  "version": "0.2.0+codex.release-20260804022217",
   "description": "Youzan Codex toolkit for open-platform development, project bootstrap, browser debugging and internal operations.",
   "author": {
     "name": "Youzan"
@@ -16,7 +16,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Youzan Toolkit",
+    "displayName": "Youzanyun Toolkit",
     "shortDescription": "\u6709\u8d5e\u4e91\u5f00\u653e\u5f00\u53d1\u3001\u6d4f\u89c8\u5668\u8c03\u8bd5\u4e0e\u5185\u90e8\u8fd0\u7ef4\u5de5\u5177\u96c6",
     "longDescription": "\u7edf\u4e00\u63d0\u4f9b\u6709\u8d5e\u4e91\u9879\u76ee\u521d\u59cb\u5316\u3001\u524d\u7aef\u5f00\u653e\u5f00\u53d1\u3001\u6d4f\u89c8\u5668\u8c03\u8bd5\u3001\u5f00\u653e\u5e73\u53f0\u72b6\u6001\u67e5\u8be2\u3001\u77e5\u8bc6\u68c0\u7d22\u4e0e\u5185\u90e8\u5de5\u7a0b\u80fd\u529b\u3002",
     "developerName": "Youzan",

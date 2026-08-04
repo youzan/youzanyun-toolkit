@@ -17,7 +17,8 @@
   },
   "extension": {
     "name": "YZY Browser Developer Tool",
-    "minimumVersion": "0.3.5",
+    "minimumVersion": "0.3.7",
+    "minimumVersionSource": "official CLI compatibility check",
     "downloadUrl": "https://file.yzcdn.cn/upload_files/yz-file/2026/07/24/FhjoenP6J_61fHVtUvv8KgxZiuM8.zip"
   },
   "template": {

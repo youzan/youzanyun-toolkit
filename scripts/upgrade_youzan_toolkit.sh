@@ -2,7 +2,7 @@
 set -euo pipefail
 
 MARKETPLACE="${MARKETPLACE:-youzan}"
-PLUGIN="${PLUGIN:-youzan-toolkit}"
+PLUGIN="${PLUGIN:-youzanyun-toolkit}"
 
 codex plugin marketplace upgrade "$MARKETPLACE"
 codex plugin add "${PLUGIN}@${MARKETPLACE}"
