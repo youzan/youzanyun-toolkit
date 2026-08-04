@@ -48,7 +48,9 @@ curl -sS 'https://doc.youzanyun.com/llms.txt'
 
 ## 内容有效性与时效判断
 
-检索结果不是都能直接作为最终推荐方案，必须先做内容有效性筛选。
+检索结果不是都能直接作为最终推荐方案，必须先做内容有效性筛选，并在同一章内处理输出内容和格式要求。
+
+### 内容有效性规则
 
 1. 如果结果中出现以下标记，不可作为最终推荐方案：
    - 已弃用
@@ -67,14 +69,28 @@ curl -sS 'https://doc.youzanyun.com/llms.txt'
 2. 如果结果明确给出了替代方案，应继续检索替代方案，并优先用替代方案文档回答。
 3. 回答中的能力名称、接口名称、参数、示例、限制条件、操作步骤和参考文档，都必须以替代方案文档为准。
 4. 历史兼容或背景说明可以简述，但不能作为新接入推荐。
-5. 如果替代方案无法检索到明确文档，直接回答：`暂时无法回答，可通过回复“转工单”解决`
+
+### 公告时效规则
 
 公告、通知、上线说明、变更通知、临时说明、活动说明、维护通知等内容，必须额外判断时效：
 
 1. 默认只在发布时间起 2 个月内视为可作为当前结论依据。
 2. 超过 2 个月且没有明确长期有效说明的公告，只能作为历史背景。
 3. 当前问题必须依赖公告判断，但只检索到过期公告时，应继续查正式文档或更新说明。
-4. 无法检索到更新依据时，回答：`暂时无法回答，可通过回复“转工单”解决`
+
+### 输出内容要求
+
+4. 回答中返回 `sourceUrl` 前必须先访问验证；只有 HTTP 状态为 2xx 时，才返回该 `sourceUrl`。
+5. 默认输出归纳后的 JSON，包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources`、`navigation`、`traceability` 等字段，不只返回接口原始 JSON。
+6. `evidence` 中每条知识库结果必须尽量保留 `sourceType`、`sourceUrl`、`url`、`docId` 等来源字段。
+7. `traceability.sourceLinks` 汇总知识库原始链接、`llms.txt` 目录链接、模块链接和 Markdown 文档链接，回答时优先引用这些链接。
+8. `traceability.missingEvidenceLinks` 中的条目表示缺少原始链接，只能作为弱依据，不能单独支撑关键结论。
+9. 不要根据字段名猜测知识库未返回的事实；脚本只能抽取标题、摘要、类目路径、URL、文档 ID 等可见信息。
+
+### 输出格式要求
+
+1. 面向人类展示时使用 `--format pretty`。
+2. 用户明确要求原始结果时使用 `--full-response`，在输出中附带完整接口响应。
 
 ## 查询建议
 
@@ -144,13 +160,3 @@ Content-Type: application/json
 - 使用 `--navigation-url <url>` 覆盖目录地址。
 - 使用 `--navigation-top-n <数量>` 调整导航候选数量，默认 5。
 - 使用 `--navigation-module-depth <数量>` 控制读取前几个模块的二级目录，默认 3。
-
-输出要求：
-
-- 默认输出归纳后的 JSON，包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources`、`navigation`、`traceability` 等字段，不只返回接口原始 JSON。
-- `evidence` 中每条知识库结果必须尽量保留 `sourceType`、`sourceUrl`、`url`、`docId` 等来源字段。
-- `traceability.sourceLinks` 汇总知识库原始链接、`llms.txt` 目录链接、模块链接和 Markdown 文档链接，回答时优先引用这些链接。
-- `traceability.missingEvidenceLinks` 中的条目表示缺少原始链接，只能作为弱依据，不能单独支撑关键结论。
-- 面向人类展示时使用 `--format pretty`。
-- 用户明确要求原始结果时使用 `--full-response`，在输出中附带完整接口响应。
-- 不要根据字段名猜测知识库未返回的事实；脚本只能抽取标题、摘要、类目路径、URL、文档 ID 等可见信息。
