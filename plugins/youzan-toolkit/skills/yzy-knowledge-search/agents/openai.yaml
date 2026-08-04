@@ -1,4 +1,4 @@
 interface:
   display_name: "YZY 有赞知识库查询"
-  short_description: "通过云文档中心检索有赞内部知识库内容"
-  default_prompt: "使用 $yzy-knowledge-search 查询有赞知识库中的订单接口信息。"
+  short_description: "通过云文档中心检索有赞内部知识库内容，并过滤弃用或过期公告"
+  default_prompt: "使用 $yzy-knowledge-search 查询有赞知识库中的订单接口信息，并优先筛选替代方案与有效公告。"
