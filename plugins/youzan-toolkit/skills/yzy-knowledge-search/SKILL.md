@@ -80,17 +80,18 @@ curl -sS 'https://doc.youzanyun.com/llms.txt'
 
 ### 输出内容要求
 
-4. 回答中返回 `sourceUrl` 前必须先访问验证；只有 HTTP 状态为 2xx 时，才返回该 `sourceUrl`。
-5. 默认输出归纳后的 JSON，包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources`、`navigation`、`traceability` 等字段，不只返回接口原始 JSON。
-6. `evidence` 中每条知识库结果必须尽量保留 `sourceType`、`sourceUrl`、`url`、`docId` 等来源字段。
-7. `traceability.sourceLinks` 汇总知识库原始链接、`llms.txt` 目录链接、模块链接和 Markdown 文档链接，回答时优先引用这些链接。
-8. `traceability.missingEvidenceLinks` 中的条目表示缺少原始链接，只能作为弱依据，不能单独支撑关键结论。
-9. 不要根据字段名猜测知识库未返回的事实；脚本只能抽取标题、摘要、类目路径、URL、文档 ID 等可见信息。
+1. 回答中返回 `sourceUrl` 前必须先访问验证；只有 HTTP 状态为 2xx 时，才返回该 `sourceUrl`。
+2. 默认面向人类输出归纳后的结论、操作步骤、关键依据和来源链接，不只返回接口原始 JSON。
+3. 内部整理证据时，每条知识库结果必须尽量保留 `sourceType`、`sourceUrl`、`url`、`docId` 等来源字段；最终回答可按自然语言或列表呈现。
+4. 内部追踪时，应汇总知识库原始链接、`llms.txt` 目录链接、模块链接和 Markdown 文档链接；最终回答优先引用已验证可访问的来源链接。
+5. 缺少原始链接的条目只能作为弱依据，不能单独支撑关键结论；如引用此类条目，应明确说明缺少可验证链接。
+6. 不要根据字段名猜测知识库未返回的事实；脚本只能抽取标题、摘要、类目路径、URL、文档 ID 等可见信息。
 
 ### 输出格式要求
 
-1. 面向人类展示时使用 `--format pretty`。
-2. 用户明确要求原始结果时使用 `--full-response`，在输出中附带完整接口响应。
+1. 面向人类展示时，调用脚本使用 `--format pretty`，最终回答也默认使用自然语言、列表或表格等人类可读格式。
+2. 只有用户明确要求 JSON、结构化输出、机器可读结果或需要沉淀为程序输入时，才输出归纳后的 JSON；JSON 中可包含 `originalQuery`、`usedQuery`、`conclusion`、`evidence`、`sources`、`navigation`、`traceability` 等字段。
+3. 用户明确要求原始结果时使用 `--full-response`，在输出中附带完整接口响应。
 
 ## 查询建议
 
