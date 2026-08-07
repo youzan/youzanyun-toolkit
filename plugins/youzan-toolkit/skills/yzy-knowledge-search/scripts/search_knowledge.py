@@ -20,7 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="查询有赞知识库。")
     parser.add_argument("query", help="搜索词，例如：订单接口")
     parser.add_argument("--original-query", help="原始问题，用于记录上下文")
-    parser.add_argument("--top-k", type=int, default=5, help="返回结果数量")
+    parser.add_argument("--top-k", type=int, default=3, help="返回结果数量")
     parser.add_argument("--endpoint", default=ENDPOINT, help="覆盖默认搜索接口地址")
     parser.add_argument("--timeout", type=float, default=30.0, help="请求超时时间，单位秒")
     parser.add_argument("--format", choices=("json", "pretty"), default="json", help="输出格式，默认 json")
@@ -30,6 +30,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--navigation-top-n", type=int, default=5, help="返回导航候选数量")
     parser.add_argument("--navigation-timeout", type=float, default=5.0, help="导航请求超时时间，单位秒")
     parser.add_argument("--navigation-module-depth", type=int, default=3, help="读取前 N 个模块的二级目录")
+    parser.add_argument("--no-source-hydration", action="store_true", help="不读取首条结果的 Markdown 原文")
+    parser.add_argument("--source-depth", type=int, default=1, help="读取前 N 条结果的 Markdown 原文")
+    parser.add_argument("--source-timeout", type=float, default=5.0, help="原文请求超时时间，单位秒")
+    parser.add_argument("--source-excerpt-limit", type=int, default=2500, help="每条原文相关片段的最大字符数")
     return parser.parse_args()
 
 
@@ -57,6 +61,82 @@ def truncate(text: str, limit: int = 240) -> str:
     if len(text) <= limit:
         return text
     return text[: limit - 1] + "..."
+
+
+def markdown_source_url(url: str) -> str:
+    """Return the downloadable Markdown URL for a supported Youzan doc URL."""
+    clean_url = url.strip().rstrip("/")
+    if not clean_url:
+        return ""
+    if clean_url.endswith(".md"):
+        return clean_url
+    if re.match(
+        r"^https?://doc\.youzanyun\.com/(?:v2/doc/(?:client|cloud)/token|resource/doc)/[^/?#]+$",
+        clean_url,
+    ):
+        return f"{clean_url}.md"
+    return ""
+
+
+def relevant_excerpt(markdown: str, query: str, limit: int = 2500) -> str:
+    """Keep compact Markdown windows around the lines most relevant to the query."""
+    if limit < 1:
+        return ""
+    lines = markdown.splitlines()
+    if not lines:
+        return ""
+
+    terms = sorted(query_terms(query), key=len, reverse=True)
+    scored_lines: list[tuple[int, int]] = []
+    for index, line in enumerate(lines):
+        lowered = line.lower()
+        score = sum(max(1, len(term)) for term in terms if term in lowered)
+        if score:
+            scored_lines.append((score, index))
+
+    if not scored_lines:
+        return truncate(markdown, limit)
+
+    selected: list[int] = []
+    for _, index in sorted(scored_lines, reverse=True):
+        if all(abs(index - previous) > 12 for previous in selected):
+            selected.append(index)
+        if len(selected) == 3:
+            break
+
+    windows: list[tuple[int, int]] = []
+    for index in sorted(selected):
+        start = max(0, index - 5)
+        end = min(len(lines), index + 9)
+        if windows and start <= windows[-1][1]:
+            windows[-1] = (windows[-1][0], max(windows[-1][1], end))
+        else:
+            windows.append((start, end))
+
+    excerpt = "\n\n...\n\n".join("\n".join(lines[start:end]).strip() for start, end in windows)
+    return truncate(excerpt, limit)
+
+
+def hydrate_evidence(
+    evidence: list[dict[str, str]],
+    query: str,
+    depth: int,
+    timeout: float,
+    excerpt_limit: int,
+) -> None:
+    """Attach relevant Markdown excerpts so the agent does not need repeated fetches."""
+    for item in evidence[: max(0, depth)]:
+        markdown_url = markdown_source_url(item.get("sourceUrl", ""))
+        if not markdown_url:
+            continue
+        try:
+            markdown = fetch_text(markdown_url, timeout)
+            excerpt = relevant_excerpt(markdown, query, excerpt_limit)
+            if excerpt:
+                item["sourceExcerpt"] = excerpt
+                item["hydratedSourceUrl"] = markdown_url
+        except Exception as exc:  # noqa: BLE001 - search evidence remains usable when hydration fails.
+            item["sourceHydrationError"] = f"读取原文失败：{exc}"
 
 
 def fetch_text(url: str, timeout: float) -> str:
@@ -332,10 +412,15 @@ def build_answer(
     data: Any,
     full_response: bool,
     navigation: dict[str, Any] | None,
+    source_depth: int = 1,
+    source_timeout: float = 5.0,
+    source_excerpt_limit: int = 2500,
 ) -> dict[str, Any]:
     raw_items = find_result_list(data)
     evidence = [normalize_item(item) for item in raw_items[:top_k]]
     evidence = [item for item in evidence if any(item.values())]
+    if source_depth > 0:
+        hydrate_evidence(evidence, used_query, source_depth, source_timeout, source_excerpt_limit)
 
     if evidence:
         primary = evidence[0]
@@ -386,6 +471,11 @@ def print_pretty(answer: dict[str, Any]) -> None:
             print(f"{index}. {title}")
             if item.get("summary"):
                 print(f"   摘要：{item['summary']}")
+            if item.get("sourceExcerpt"):
+                print("   原文相关片段：")
+                print(item["sourceExcerpt"])
+            if item.get("hydratedSourceUrl"):
+                print(f"   Markdown 原文：{item['hydratedSourceUrl']}")
             if item.get("categoryPath"):
                 print(f"   类目路径：{item['categoryPath']}")
             if item.get("url"):
@@ -473,6 +563,9 @@ def main() -> int:
         data,
         args.full_response,
         navigation,
+        source_depth=0 if args.no_source_hydration else args.source_depth,
+        source_timeout=args.source_timeout,
+        source_excerpt_limit=args.source_excerpt_limit,
     )
     if args.format == "pretty":
         print_pretty(answer)
