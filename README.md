@@ -66,6 +66,20 @@ cd /path/to/youzan-toolkit
 
 ## 更新
 
+使用方从 marketplace 更新插件：
+
+```bash
+codex plugin marketplace upgrade youzan && codex plugin add youzanyun-toolkit@youzan
+```
+
+使用方已 clone 本仓库时，也可以在仓库目录运行：
+
+```bash
+./scripts/upgrade_youzan_toolkit.sh
+```
+
+## 发布正式版
+
 发布方修改插件后，在合并到 `master` 前刷新 cachebuster 并校验：
 
 ```bash
@@ -75,19 +89,7 @@ git commit -m "Release youzanyun-toolkit plugin"
 git push
 ```
 
-这一步应在功能分支完成，并把刷新后的插件版本、cachebuster 和校验相关变更随 MR 一起提交。合并后，使用方从 `master` 安装或更新时才能拿到新的插件内容。
-
-使用方更新：
-
-```bash
-codex plugin marketplace upgrade youzan && codex plugin add youzanyun-toolkit@youzan
-```
-
-已 clone 仓库时也可以运行：
-
-```bash
-./scripts/upgrade_youzan_toolkit.sh
-```
+这一步应在功能分支完成，并把刷新后的插件版本、cachebuster 和校验相关变更随 MR 一起提交。合并后，使用方从 `master` 更新时才能拿到新的插件内容。
 
 ## 校验
 
