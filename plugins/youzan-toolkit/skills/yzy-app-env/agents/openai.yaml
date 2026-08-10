@@ -1,0 +1,4 @@
+interface:
+  display_name: "YZY 应用环境变量"
+  short_description: "读取、注入和变更有赞应用环境变量"
+  default_prompt: "使用 $yzy-app-env 查看当前应用 dev 环境的环境变量。"
