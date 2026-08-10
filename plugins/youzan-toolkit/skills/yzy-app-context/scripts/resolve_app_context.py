@@ -19,7 +19,6 @@ def parse_args() -> argparse.Namespace:
     selector_group.add_argument("--app-id")
     selector_group.add_argument("--app-name")
     parser.add_argument("--env", choices=("dev", "prod", "open"))
-    parser.add_argument("--zone")
     parser.add_argument("--expected-app-id")
     parser.add_argument("--expected-env", choices=("dev", "prod", "open"))
     return parser.parse_args()
@@ -53,7 +52,6 @@ def main() -> None:
         ("--app-id", args.app_id),
         ("--app-name", args.app_name),
         ("--env", args.env),
-        ("--zone", args.zone),
     ):
         if value:
             zancli_command.extend((option, value))
@@ -67,6 +65,8 @@ def main() -> None:
         text=True,
     )
     if result.returncode != 0:
+        if result.stdout:
+            sys.stderr.write(result.stdout)
         raise SystemExit(result.returncode)
 
     try:
