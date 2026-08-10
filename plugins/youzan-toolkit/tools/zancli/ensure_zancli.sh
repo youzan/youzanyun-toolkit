@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ZANCLI_INSTALL_URL="${ZANCLI_INSTALL_URL:-https://download.qima-inc.com/files/ops-assets/zancli/install.sh}"
+ZANCLI_VERSION="${ZANCLI_VERSION:-v1.0.14-internal.69-gc4f27051}"
 CHECK_ONLY=false
 COMMAND_ARGS=()
 
@@ -46,8 +47,8 @@ else
     exit 1
   fi
 
-  echo "Installing zancli from the internal channel..."
-  curl -fsSL "$ZANCLI_INSTALL_URL" | bash
+  echo "Installing zancli ${ZANCLI_VERSION} from the internal channel..."
+  curl -fsSL "$ZANCLI_INSTALL_URL" | bash -s -- --version "$ZANCLI_VERSION"
   export PATH="$HOME/.local/bin:${PATH:-}"
 
   if command -v zancli >/dev/null 2>&1; then
