@@ -27,13 +27,13 @@ Youzanyun Toolkit 是 AI 开发入口，不承载其他产品源码：
 |---|---|---|
 | Codex 插件包 `youzanyun-toolkit` | 本仓库 Git marketplace | 分发 Skills、工具脚本和发布版本信息 |
 | `@youzan-cloud/cli` | 内部 npm | 提供有赞云开放工程初始化流程；Toolkit 只记录已验证版本和调用方式 |
-| `zancli` | 内部安装脚本 | 提供应用上下文、能力包、发布、日志、Trace、RDS 等内部操作命令；Toolkit 只提供安装校验入口和使用约束 |
+| `zancli` | 公网 stable 安装脚本 | 提供应用上下文、能力包、发布、日志、Trace、RDS 等应用操作命令；Toolkit 只提供安装校验入口和使用约束 |
 | `@youzan-cloud/browser-runtime` | 内部 npm | 提供调试规则，不复制 Runtime 源码 |
 | YZY Browser Developer Tool | Chrome 扩展 ZIP/后续扩展市场 | 提供最低版本和下载信息 |
 | `cloud-ui-v2` | Git 模板仓库 | 提供工程规范，不复制模板源码 |
 | Codex Skills | Codex 插件包内置内容 | 提供 AI 可读取的场景化操作说明 |
 
-当前发布渠道记录在 `plugins/youzan-toolkit/assets/yzy-release.json`。版本清单只描述已验证的组合，不替代 npm dist-tag、内部 CLI 安装渠道、扩展发布系统或 Codex marketplace。
+当前发布渠道记录在 `plugins/youzan-toolkit/assets/yzy-release.json`。版本清单只描述已验证的组合，不替代 npm dist-tag、zancli stable 渠道、扩展发布系统或 Codex marketplace。
 
 ## 安装
 

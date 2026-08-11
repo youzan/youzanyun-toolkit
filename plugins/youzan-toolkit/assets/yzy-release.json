@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-10",
+  "updatedAt": "2026-08-11",
   "cli": {
     "package": "@youzan-cloud/cli",
     "channel": "beta",
@@ -10,10 +10,11 @@
   },
   "zancli": {
     "package": "zancli",
-    "channel": "internal",
-    "testedVersion": "v1.0.14-internal.69-gc4f27051",
-    "installUrl": "https://download.qima-inc.com/files/ops-assets/zancli/install.sh",
-    "command": "/bin/bash -c \"$(curl -fsSL https://download.qima-inc.com/files/ops-assets/zancli/install.sh)\" -- --version v1.0.14-internal.69-gc4f27051"
+    "channel": "public-stable",
+    "testedVersion": "1.0.18",
+    "stableVersionUrl": "https://yzy-static.yzcdn.cn/devtools/release/stable.txt",
+    "installUrl": "https://yzy-static.yzcdn.cn/devtools/release/install.sh",
+    "command": "sudo /bin/bash -c \"$(curl -fsSL https://yzy-static.yzcdn.cn/devtools/release/install.sh)\""
   },
   "runtime": {
     "package": "@youzan-cloud/browser-runtime",

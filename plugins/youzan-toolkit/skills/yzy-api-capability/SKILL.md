@@ -1,13 +1,13 @@
 ---
 name: yzy-api-capability
-description: 查询和预检有赞云开放 API 能力包授权。用于设计或调用有赞云开放 API 前，确认当前应用类目下的 API 能力包、能力包详情、目标 API 是否已授权；所有应用级 capability 操作前必须先解析应用上下文并使用 内部 CLI 工具校验登录。
+description: 查询和预检有赞云开放 API 能力包授权。用于设计或调用有赞云开放 API 前，确认当前应用类目下的 API 能力包、能力包详情、目标 API 是否已授权；所有应用级 capability 操作前必须先解析应用上下文并使用 zancli 校验登录。
 ---
 
 # YZY API 能力包
 
 在设计或调用有赞云开放 API 前，先确认当前应用有哪些 API 能力包，以及目标 API 是否已授权。能力包只用于 API 授权判断；开放消息和扩展点不通过能力包授权。
 
-所有 `capability` 操作都先使用 `yzy-app-context` 解析目标应用；该 skill 会连带完成内部 CLI 工具的安装和登录校验。不要直接根据当前目录、应用名或上一轮对话执行 API 能力包命令。
+所有 `capability` 操作都先使用 `yzy-app-context` 解析目标应用；该 skill 会连带完成 `zancli` 的安装和登录校验。不要直接根据当前目录、应用名或上一轮对话执行 API 能力包命令。
 
 ## 通用前置
 

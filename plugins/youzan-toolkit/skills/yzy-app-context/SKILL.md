@@ -5,7 +5,7 @@ description: 在执行有赞应用级发布、能力、日志、链路追踪或 
 
 # YZY 应用上下文前置检查
 
-执行 `pipeline`、`capability`、`log`、`trace` 或 `rds` 组的任何命令前，必须先运行本 skill 的上下文解析脚本。该脚本会通过 内部 CLI 工具自动完成 `zancli` 安装与登录校验；不要绕过它直接执行应用级命令。
+执行 `pipeline`、`capability`、`log`、`trace` 或 `rds` 组的任何命令前，必须先运行本 skill 的上下文解析脚本。该脚本会自动完成 `zancli` 安装与登录校验；不要绕过它直接执行应用级命令。
 
 ## 解析上下文
 

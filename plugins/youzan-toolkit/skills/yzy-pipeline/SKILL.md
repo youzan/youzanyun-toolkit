@@ -5,7 +5,7 @@ description: 查询有赞应用构建计划、触发 pipeline 构建、查看构
 
 # YZY 应用发布
 
-所有 `pipeline` 操作都先使用 `yzy-app-context` 解析目标应用；该 skill 会连带完成内部 CLI 工具的安装和登录校验。不要直接根据当前目录、应用名或上一轮对话执行发布命令。
+所有 `pipeline` 操作都先使用 `yzy-app-context` 解析目标应用；该 skill 会连带完成 `zancli` 的安装和登录校验。不要直接根据当前目录、应用名或上一轮对话执行发布命令。
 
 ## 1. 前置检查
 

@@ -67,6 +67,7 @@ codex plugin add youzanyun-toolkit@youzan
 - 已能正常打开 Codex 操作台。
 - 已按“安装和更新”章节安装 Youzanyun Toolkit Skills。
 - 已拥有目标有赞云开放平台应用的开发权限。
+- 需要应用级操作时，Toolkit 会通过公网 stable 渠道安装或复用本机 `zancli`，当前验证版本为 `1.0.18`。
 - 如需本地页面调试，浏览器环境已安装 YZY Browser Developer Tool。（可以在可用Skill-初始化开放工程中安装）
 - 目标工程已在 Codex 当前工作区，或开发者能在 Codex 中说明工程位置。
 
