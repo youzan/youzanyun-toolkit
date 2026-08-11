@@ -42,6 +42,7 @@ Youzanyun Toolkit 是 AI 开发入口，不承载其他产品源码：
 HTTPS：
 
 ```bash
+codex plugin marketplace remove youzan
 codex plugin marketplace add https://github.com/youzan/youzanyun-toolkit --ref main
 codex plugin add youzanyun-toolkit@youzan
 ```
@@ -49,6 +50,7 @@ codex plugin add youzanyun-toolkit@youzan
 SSH：
 
 ```bash
+codex plugin marketplace remove youzan
 codex plugin marketplace add git@github.com:youzan/youzanyun-toolkit.git --ref main
 codex plugin add youzanyun-toolkit@youzan
 ```
@@ -63,7 +65,7 @@ cd /path/to/youzanyun-toolkit
 
 安装或更新后新开 Codex task，使 Skills 重新加载。
 
-> 当前仓库是内部 Git marketplace。面向外部开发者分发时，需要公开镜像或独立插件分发服务；不能假设外部用户拥有内部 GitLab 权限。
+> 如果本机从旧地址安装过名为 `youzan` 的 marketplace，先执行 `codex plugin marketplace remove youzan`，避免继续命中旧缓存。
 
 ## 更新
 

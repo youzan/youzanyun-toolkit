@@ -11,6 +11,7 @@ Youzanyun Toolkit 是面向有赞云开放开发的 Codex 技能包。除安装�
 首次安装：
 
 ```text
+codex plugin marketplace remove youzan
 codex plugin marketplace add https://github.com/youzan/youzanyun-toolkit --ref main
 codex plugin add youzanyun-toolkit@youzan
 ```
