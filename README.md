@@ -16,7 +16,8 @@
 - `yzy-pipeline`：查询和触发构建计划。
 - `yzy-log-trace`：查询日志和 Trace。
 - `yzy-rds`：查询和操作应用绑定的 RDS。
-- `yzy-api-capability`：查询开放 API 能力包授权。
+- `yzy-api-capability`：查询、预检和申请开放 API 能力包授权。
+- `yzy-app-env`：读取、注入和变更应用环境变量。
 
 ## 制品边界
 
