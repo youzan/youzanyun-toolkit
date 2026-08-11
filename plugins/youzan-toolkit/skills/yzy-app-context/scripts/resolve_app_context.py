@@ -43,7 +43,7 @@ def main() -> None:
     args = parse_args()
     skill_dir = Path(__file__).resolve().parent.parent
     plugin_root = skill_dir.parent.parent
-    bootstrap_script = plugin_root / "tools" / "zancli" / "ensure_zancli.sh"
+    bootstrap_script = plugin_root / "tools" / "zancli" / "ensure_zancli.py"
     if not bootstrap_script.is_file():
         raise SystemExit(f"Missing zancli bootstrap script: {bootstrap_script}")
 
@@ -58,7 +58,7 @@ def main() -> None:
     zancli_command.extend(("--output", "json"))
 
     result = subprocess.run(
-        ["bash", str(bootstrap_script), "--", *zancli_command],
+        [sys.executable, str(bootstrap_script), "--", *zancli_command],
         check=False,
         stdout=subprocess.PIPE,
         stderr=None,

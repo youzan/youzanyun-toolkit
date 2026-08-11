@@ -29,35 +29,35 @@ python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-name self-c
 最近 6 小时最新 50 条：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log search --app-id 79782 --env prod --since 6h --limit 50 --output json
 ```
 
 按关键词：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log search --app-id 79782 --env prod --since 1h -q "NullPointer" --output json
 ```
 
 按级别：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log search --app-id 79782 --env prod --since 6h --level ERROR --output json
 ```
 
 按 traceId：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log search --app-id 79782 --env prod --since 6h --trace-id 8acbf5d682f3 --output json
 ```
 
 使用 RFC3339 绝对时间窗：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log search --app-id 79782 --env prod \
   --start 2026-07-28T09:00:00+08:00 --end 2026-07-28T10:00:00+08:00 --output json
 ```
@@ -78,10 +78,10 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 ## 计数
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log count --app-id 79782 --env prod --since 168h --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log count --app-id 79782 --env prod --since 6h --trace-id 8acbf5d682f3 --output json
 ```
 
@@ -90,7 +90,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 从 `search` 结果里取一条日志的定位信息，展开它前后的上下文：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli log scan \
   --app-id 79782 --env prod \
   --host node-xxx --idc idc-a \
@@ -105,7 +105,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 ## 按 traceId 汇总
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli trace get 8acbf5d682f3689149d1a63bfe3a0ae7 \
   --app-id 79782 --env prod --since 6h --output json
 ```

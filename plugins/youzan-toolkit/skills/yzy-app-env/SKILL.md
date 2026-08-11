@@ -8,7 +8,7 @@ description: 管理有赞应用环境变量。用于通过 zancli app env list/g
 本 skill 用于读取、注入和变更有赞应用环境变量。所有操作都必须使用 `zancli app env ...`，并先确认当前 `zancli` 可用和已登录。
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh --check
+python3 <plugin-root>/tools/zancli/ensure_zancli.py --check
 ```
 
 ## 目标与环境

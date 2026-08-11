@@ -40,16 +40,16 @@ python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-name self-c
 `--instance` 也可以单独用来把候选收窄到单库，从而继续省略 `--db`。
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds db list --app-name self-container-test --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds table list --app-name self-container-test --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds table list --app-name self-container-test --table cobuild --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds table schema --app-name self-container-test --table cobuild_user --output json
 ```
 
@@ -58,7 +58,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 DDL 是写操作。先做预检查，不改动任何东西：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds ddl prepare \
   --app-name self-container-test \
   --table cobuild_user \
@@ -72,7 +72,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 python3 <app-context-skill-dir>/scripts/resolve_app_context.py \
   --app-id 79782 --env dev --expected-app-id 79782 --expected-env dev
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds ddl exec \
   --app-name self-container-test \
   --type alter --table cobuild_user \
@@ -86,10 +86,10 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 跟踪计划：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds ddl status --plan-id 123456 --app-name self-container-test --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds ddl plans --app-name self-container-test --table cobuild_user --output json
 ```
 
@@ -100,22 +100,22 @@ DML `exec` 即使是 `SELECT` 也走确认门禁，因为同一个入口可以�
 命令末尾不要加分号，分号会被 shell 当成命令分隔符。
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds dml exec \
   --app-name self-container-test \
   --statement "select count(1) cnt from cobuild_user" \
   --confirm --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds dml exec \
   --app-name self-container-test \
   --statement "select * from cobuild_user" \
   --limit 100 --confirm --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds dml history --app-name self-container-test --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli rds dml history --app-name self-container-test --table cobuild_user --type SELECT --output json
 ```
 

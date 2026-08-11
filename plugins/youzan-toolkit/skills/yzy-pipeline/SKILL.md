@@ -18,8 +18,8 @@ python3 <app-context-skill-dir>/scripts/resolve_app_context.py
 用户明确指定目标时，完整传递选择参数：
 
 ```bash
-bash <plugin-root>/tools/zancli/app_context.sh --app-id 79782 --env dev
-bash <plugin-root>/tools/zancli/app_context.sh --app-name self-container-test --env dev --zone <zone>
+python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-id 79782 --env dev
+python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-name self-container-test --env dev --zone <zone>
 ```
 
 解析成功后，后续所有 `zancli` 命令继续携带相同的 `--app-id` / `--app-name`、`--env`、`--zone`，避免目标漂移。
@@ -31,14 +31,14 @@ bash <plugin-root>/tools/zancli/app_context.sh --app-name self-container-test --
 通用查询：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli pipeline plans --app-id <app-id> --env <env> --output json
 ```
 
 仅当用户只关心特定技术栈时追加 `--type`：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli pipeline plans --app-id <app-id> --env <env> --type CLOUD_FRONTEND --output json
 ```
 
@@ -66,7 +66,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 python3 <app-context-skill-dir>/scripts/resolve_app_context.py \
   --app-id 79782 --env dev --expected-app-id 79782 --expected-env dev
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli pipeline trigger \
   --app-id 79782 --env dev \
   --pipeline-id 326 \
@@ -82,13 +82,13 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 读取状态、历史记录或日志前，同样先解析应用上下文，并在命令中继续传递相同的应用选择参数：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli pipeline status --record-id 727465 --app-id 79782 --env dev --output json
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli pipeline status --record-id 727465 --app-id 79782 --env dev --wait --interval 10s --timeout 15m --output json
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli pipeline records --pipeline-id 326 --app-id 79782 --env dev --page 1 --page-size 20 --output json
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli pipeline logs --step-id 8891234 --app-id 79782 --env dev --output json
 ```
 

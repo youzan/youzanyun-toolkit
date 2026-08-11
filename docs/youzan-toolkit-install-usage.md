@@ -80,6 +80,8 @@ codex plugin add youzanyun-toolkit@youzan
 
 Toolkit 在应用级操作前会自动校验 `zancli`，并按 stable 渠道安装或升级。需要手动安装时，按本机系统执行以下命令。
 
+Windows 原生环境下，Toolkit 的应用上下文解析会通过 Python 入口安装并显式调用 `~/bin/zancli.exe`，不要求额外安装 Git Bash，也不依赖 `~/bin` 在旧版 `zancli` 目录之前。
+
 ### Linux（AMD64）
 
 安装脚本会从 `stable.txt` 获取最新版本：

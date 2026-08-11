@@ -33,20 +33,20 @@ python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-name self-c
 列出当前应用类目下的 API 能力包：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli capability list --app-name self-container-test --output json
 ```
 
 按关键字过滤时，`--api`、`--package`、`--status` 三个过滤器互斥，不要同时传多个：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli capability list --app-name self-container-test --api 交易 --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli capability list --app-name self-container-test --package 商品 --output json
 
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli capability list --app-name self-container-test --status granted --output json
 ```
 
@@ -57,7 +57,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 查看某个 API 能力包的详情，包括 API 列表和文档链接：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli capability get --app-name self-container-test --package-id 1234 --output json
 ```
 
@@ -66,7 +66,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 精确预检一个 API 是否已授权：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli capability check --app-name self-container-test \
   --api youzan.trade.get --no-interactive --output json
 ```
@@ -96,7 +96,7 @@ bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
 提交前先把应用、环境、能力包 ID 和申请理由展示给用户复核。确认无误后再执行：
 
 ```bash
-bash <plugin-root>/tools/zancli/ensure_zancli.sh -- \
+python3 <plugin-root>/tools/zancli/ensure_zancli.py -- \
   zancli capability apply \
   --app-name self-container-test \
   --env prod \

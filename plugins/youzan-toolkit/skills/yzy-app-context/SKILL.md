@@ -12,14 +12,14 @@ description: 在执行有赞应用级发布、能力、日志、链路追踪或 
 在目标应用仓库目录中，优先让 `zancli` 按当前目录推断：
 
 ```bash
-bash <plugin-root>/tools/zancli/app_context.sh
+python3 <app-context-skill-dir>/scripts/resolve_app_context.py
 ```
 
 用户已经指定目标时，完整传递通用选择参数：
 
 ```bash
-bash <plugin-root>/tools/zancli/app_context.sh --app-id 79782 --env dev
-bash <plugin-root>/tools/zancli/app_context.sh --app-name self-container-test --env dev
+python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-id 79782 --env dev
+python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-name self-container-test --env dev
 ```
 
 脚本输出 `zancli app context --output json` 的完整 JSON，并至少校验 `appId`、`appName` 和环境。调用后先向用户说明解析到的应用 ID、名称、应用类型、环境、发布目标、绑定 addon 与开放能力状态；不要只依据目录名或用户口述推断。
@@ -36,7 +36,7 @@ bash <plugin-root>/tools/zancli/app_context.sh --app-name self-container-test --
 用户确认“对应用 79782 的 dev 环境执行”后：
 
 ```bash
-bash <plugin-root>/tools/zancli/app_context.sh \
+python3 <app-context-skill-dir>/scripts/resolve_app_context.py \
   --app-id 79782 --env dev --expected-app-id 79782 --expected-env dev
 ```
 
