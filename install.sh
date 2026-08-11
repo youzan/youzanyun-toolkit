@@ -43,8 +43,8 @@ if ! command -v codex >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ ! -f "$ROOT_DIR/marketplace.json" ]]; then
-  echo "Missing marketplace.json in $ROOT_DIR." >&2
+if [[ ! -f "$ROOT_DIR/.agents/plugins/marketplace.json" ]]; then
+  echo "Missing .agents/plugins/marketplace.json in $ROOT_DIR." >&2
   exit 1
 fi
 

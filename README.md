@@ -1,6 +1,6 @@
 # Youzan Codex Plugins
 
-有赞 Codex 插件市场。Codex Git marketplace 清单位于 `.agents/plugins/marketplace.json`，根目录 `marketplace.json` 保留为兼容副本，插件源码位于 `plugins/`。
+有赞 Codex 插件市场。Codex Git marketplace 清单位于 `.agents/plugins/marketplace.json`，插件源码位于 `plugins/`。
 
 对外开发者安装和使用流程见 [Youzanyun Toolkit 对外开发者使用文档](docs/youzan-toolkit-install-usage.md)。
 
@@ -83,16 +83,16 @@ codex plugin marketplace upgrade youzan && codex plugin add youzanyun-toolkit@yo
 
 ## 发布正式版
 
-发布方修改插件后，在合并到 `master` 前刷新 cachebuster 并校验：
+发布方修改插件后，在合并到 `main` 前刷新 cachebuster 并校验：
 
 ```bash
 ./scripts/release_youzan_toolkit.sh
-git add marketplace.json plugins scripts README.md
+git add .agents plugins scripts README.md docs install.sh
 git commit -m "Release youzanyun-toolkit plugin"
 git push
 ```
 
-这一步应在功能分支完成，并把刷新后的插件版本、cachebuster 和校验相关变更随 MR 一起提交。合并后，使用方从 `master` 更新时才能拿到新的插件内容。
+这一步应在功能分支完成，并把刷新后的插件版本、cachebuster 和校验相关变更随 MR 一起提交。合并后，使用方从 `main` 更新时才能拿到新的插件内容。
 
 ## 校验
 
