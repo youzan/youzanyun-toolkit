@@ -11,6 +11,8 @@ description: 管理有赞应用环境变量。用于通过 zancli app env list/g
 python3 <plugin-root>/tools/zancli/ensure_zancli.py --check
 ```
 
+`zancli` 安装校验入口同时提供 Python 和 Bash 两种形式。优先尝试 `python3 <plugin-root>/tools/zancli/ensure_zancli.py`；如果当前环境没有可用 Python 但有 Bash，再尝试 `bash <plugin-root>/tools/zancli/ensure_zancli.sh`。
+
 ## 目标与环境
 
 `list`、`get`、`exec`、`create`、`update`、`delete` 都必须显式传入 `--env`；缺失时 CLI 会在网络请求前返回 `APP_CONTEXT_ENVIRONMENT_REQUIRED`。不要默认环境，不要用目录名猜测生产或 QA。

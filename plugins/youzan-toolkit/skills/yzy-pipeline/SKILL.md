@@ -7,6 +7,8 @@ description: 查询有赞应用构建计划、触发 pipeline 构建、查看构
 
 所有 `pipeline` 操作都先使用 `yzy-app-context` 解析目标应用；该 skill 会连带完成 `zancli` 的安装和登录校验。不要直接根据当前目录、应用名或上一轮对话执行发布命令。
 
+`zancli` 安装校验入口同时提供 Python 和 Bash 两种形式。优先尝试 `python3 <plugin-root>/tools/zancli/ensure_zancli.py`；如果当前环境没有可用 Python 但有 Bash，再尝试 `bash <plugin-root>/tools/zancli/ensure_zancli.sh`。
+
 ## 1. 前置检查
 
 先解析应用上下文，并向用户展示应用 ID、名称、环境、发布目标与已知状态：
