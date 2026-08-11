@@ -76,6 +76,43 @@ codex plugin add youzanyun-toolkit@youzan
 
 如需检查 YZY Browser Developer Tool 版本，优先执行官方 YZY CLI 的版本检查或初始化流程。Toolkit 清单只记录发布时验证过的最低版本和下载地址；如果 CLI 提示的最低扩展版本更高，以 CLI 实测门槛为准，不要把版本门禁失败误判为登录失败或工程不兼容。
 
+## zancli 下载安装
+
+Toolkit 在应用级操作前会自动校验 `zancli`，并按 stable 渠道安装或升级。需要手动安装时，按本机系统执行以下命令。
+
+### Linux（AMD64）
+
+安装脚本会从 `stable.txt` 获取最新版本：
+
+```bash
+sudo /bin/bash -c "$(curl -fsSL https://yzy-static.yzcdn.cn/devtools/release/install.sh)"
+zancli --version
+```
+
+### macOS（Intel 和 Apple Silicon）
+
+安装脚本会从 `stable.txt` 获取最新版本，并安装到默认 `PATH` 中的 `/usr/local/bin`：
+
+```bash
+sudo /bin/bash -c "$(curl -fsSL https://yzy-static.yzcdn.cn/devtools/release/install.sh)"
+export PATH="/usr/local/bin:$PATH"
+zancli --version
+```
+
+### Windows（AMD64）
+
+在 PowerShell 中执行以下命令。命令会先读取 `stable.txt`，不会固定到某个版本：
+
+```powershell
+$version = (curl.exe -fsSL "https://yzy-static.yzcdn.cn/devtools/release/stable.txt").Trim()
+$installDir = Join-Path $HOME "bin"
+New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+curl.exe -fL "https://yzy-static.yzcdn.cn/devtools/release/$version/bin/windows/amd64/zancli.exe" -o (Join-Path $installDir "zancli.exe")
+$env:Path = "$installDir;$env:Path"
+[Environment]::SetEnvironmentVariable("Path", "$installDir;$([Environment]::GetEnvironmentVariable("Path", "User"))", "User")
+zancli --version
+```
+
 ## 可用 Skill
 
 | Skill | 什么时候使用 |

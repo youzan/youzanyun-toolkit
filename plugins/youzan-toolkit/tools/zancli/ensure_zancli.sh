@@ -20,12 +20,37 @@ EOF
 find_zancli() {
   if command -v zancli >/dev/null 2>&1; then
     command -v zancli
+  elif command -v zancli.exe >/dev/null 2>&1; then
+    command -v zancli.exe
   elif [[ -x /usr/local/bin/zancli ]]; then
     printf '%s\n' "/usr/local/bin/zancli"
   elif [[ -x "$HOME/.local/bin/zancli" ]]; then
     printf '%s\n' "$HOME/.local/bin/zancli"
   elif [[ -x "$HOME/bin/zancli" ]]; then
     printf '%s\n' "$HOME/bin/zancli"
+  elif [[ -x "$HOME/bin/zancli.exe" ]]; then
+    printf '%s\n' "$HOME/bin/zancli.exe"
+  fi
+}
+
+is_windows_shell() {
+  case "$(uname -s | tr '[:upper:]' '[:lower:]')" in
+    msys*|mingw*|cygwin*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+curl_bin() {
+  if is_windows_shell && command -v curl.exe >/dev/null 2>&1; then
+    command -v curl.exe
+  elif command -v curl >/dev/null 2>&1; then
+    command -v curl
+  else
+    return 1
   fi
 }
 
@@ -46,10 +71,11 @@ zancli_version() {
 }
 
 target_version() {
+  local curl_path=""
   local stable=""
 
-  if command -v curl >/dev/null 2>&1; then
-    stable="$(curl -fsSL "$ZANCLI_STABLE_VERSION_URL" 2>/dev/null | extract_semver || true)"
+  if curl_path="$(curl_bin 2>/dev/null)"; then
+    stable="$("$curl_path" -fsSL "$ZANCLI_STABLE_VERSION_URL" 2>/dev/null | extract_semver || true)"
   fi
 
   if [[ -n "$stable" ]]; then
@@ -60,18 +86,43 @@ target_version() {
 }
 
 install_zancli() {
-  if ! command -v curl >/dev/null 2>&1; then
+  local curl_path=""
+
+  if ! curl_path="$(curl_bin 2>/dev/null)"; then
     echo "curl is required to install or upgrade zancli." >&2
     exit 1
   fi
 
+  if is_windows_shell; then
+    case "$(uname -m | tr '[:upper:]' '[:lower:]')" in
+      x86_64|amd64)
+        ;;
+      *)
+        echo "unsupported Windows architecture: $(uname -m); only AMD64 is available" >&2
+        exit 1
+        ;;
+    esac
+
+    local install_dir="$HOME/bin"
+    local output="$install_dir/zancli.exe"
+    local download_url="https://yzy-static.yzcdn.cn/devtools/release/v${TARGET_VERSION}/bin/windows/amd64/zancli.exe"
+
+    echo "Installing zancli ${TARGET_VERSION} for Windows AMD64..."
+    mkdir -p "$install_dir"
+    "$curl_path" -fL "$download_url" -o "$output"
+    chmod +x "$output"
+    export PATH="$install_dir:${PATH:-}"
+    echo "install zancli successful!"
+    return 0
+  fi
+
   echo "Installing zancli from the public stable channel..."
   if [[ "$(id -u)" -eq 0 ]]; then
-    curl -fsSL "$ZANCLI_INSTALL_URL" | /bin/bash
+    "$curl_path" -fsSL "$ZANCLI_INSTALL_URL" | /bin/bash
   elif command -v sudo >/dev/null 2>&1; then
-    curl -fsSL "$ZANCLI_INSTALL_URL" | sudo /bin/bash
+    "$curl_path" -fsSL "$ZANCLI_INSTALL_URL" | sudo /bin/bash
   else
-    curl -fsSL "$ZANCLI_INSTALL_URL" | /bin/bash
+    "$curl_path" -fsSL "$ZANCLI_INSTALL_URL" | /bin/bash
   fi
   export PATH="/usr/local/bin:$HOME/.local/bin:$HOME/bin:${PATH:-}"
 }

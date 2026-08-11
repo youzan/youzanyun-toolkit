@@ -33,7 +33,7 @@ Youzanyun Toolkit 是 AI 开发入口，不承载其他产品源码：
 | `cloud-ui-v2` | Git 模板仓库 | 提供工程规范，不复制模板源码 |
 | Codex Skills | Codex 插件包内置内容 | 提供 AI 可读取的场景化操作说明 |
 
-当前发布渠道记录在 `plugins/youzan-toolkit/assets/yzy-release.json`。版本清单描述已验证的组合；`zancli` 会在使用前按公网 stable 渠道强制对齐版本。
+当前发布渠道记录在 `plugins/youzan-toolkit/assets/yzy-release.json`。版本清单描述已验证的组合；`zancli` 会在使用前按公网 stable 渠道强制对齐版本，支持 Linux AMD64、macOS Intel/Apple Silicon 和 Windows AMD64。
 
 ## 安装
 
