@@ -1,6 +1,6 @@
 # Youzan Codex Plugins
 
-有赞 Codex 插件市场。Marketplace 清单位于 `.agents/plugins/marketplace.json`，插件源码位于 `plugins/`。
+有赞 Codex 插件市场。Marketplace 清单位于根目录 `marketplace.json`，插件源码位于 `plugins/`。
 
 对外开发者安装和使用流程见 [Youzanyun Toolkit 对外开发者使用文档](docs/youzan-toolkit-install-usage.md)。
 
@@ -42,22 +42,22 @@ Youzanyun Toolkit 是 AI 开发入口，不承载其他产品源码：
 HTTPS：
 
 ```bash
-codex plugin marketplace add https://gitlab.qima-inc.com/youzanyun/youzan-toolkit --ref main
+codex plugin marketplace add https://github.com/youzan/youzanyun-toolkit --ref main
 codex plugin add youzanyun-toolkit@youzan
 ```
 
 SSH：
 
 ```bash
-codex plugin marketplace add git@gitlab.qima-inc.com:youzanyun/youzan-toolkit.git --ref main
+codex plugin marketplace add git@github.com:youzan/youzanyun-toolkit.git --ref main
 codex plugin add youzanyun-toolkit@youzan
 ```
 
 本地开发：
 
 ```bash
-git clone https://gitlab.qima-inc.com/youzanyun/youzan-toolkit /path/to/youzan-toolkit
-cd /path/to/youzan-toolkit
+git clone https://github.com/youzan/youzanyun-toolkit /path/to/youzanyun-toolkit
+cd /path/to/youzanyun-toolkit
 ./install.sh
 ```
 
