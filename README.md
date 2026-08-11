@@ -1,6 +1,6 @@
 # Youzan Codex Plugins
 
-有赞 Codex 插件市场。Marketplace 清单位于根目录 `marketplace.json`，插件源码位于 `plugins/`。
+有赞 Codex 插件市场。Codex Git marketplace 清单位于 `.agents/plugins/marketplace.json`，根目录 `marketplace.json` 保留为兼容副本，插件源码位于 `plugins/`。
 
 对外开发者安装和使用流程见 [Youzanyun Toolkit 对外开发者使用文档](docs/youzan-toolkit-install-usage.md)。
 

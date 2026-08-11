@@ -1,0 +1,20 @@
+{
+  "name": "youzan",
+  "interface": {
+    "displayName": "Youzan"
+  },
+  "plugins": [
+    {
+      "name": "youzanyun-toolkit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/youzan-toolkit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
