@@ -7,13 +7,15 @@ description: 在执行有赞应用级发布、能力、日志、链路追踪或 
 
 执行 `pipeline`、`capability`、`log`、`trace` 或 `rds` 组的任何命令前，必须先运行本 skill 的上下文解析脚本。该脚本会自动完成 `zancli` 安装与登录校验；不要绕过它直接执行应用级命令。
 
-脚本入口同时提供 Python 和 Bash 两种形式。优先尝试 Python 入口，Windows 原生环境必须优先使用 Python；如果当前环境没有可用 `python3` 但有 Bash，再尝试 Bash 入口。
+脚本入口同时提供 PowerShell、Python 和 Bash 三种形式。Windows 原生环境优先使用 PowerShell；通用环境优先尝试 Python；如果当前环境没有可用 PowerShell/Python 但有 Bash，再尝试 Bash 入口。
 
 ## 解析上下文
 
 在目标应用仓库目录中，优先让 `zancli` 按当前目录推断：
 
 ```bash
+powershell -ExecutionPolicy Bypass -File <plugin-root>/tools/zancli/ensure_zancli.ps1 -- zancli app context --output json
+# or:
 python3 <app-context-skill-dir>/scripts/resolve_app_context.py
 # fallback when bash is available:
 bash <plugin-root>/tools/zancli/app_context.sh
@@ -22,6 +24,9 @@ bash <plugin-root>/tools/zancli/app_context.sh
 用户已经指定目标时，完整传递通用选择参数：
 
 ```bash
+powershell -ExecutionPolicy Bypass -File <plugin-root>/tools/zancli/ensure_zancli.ps1 -- zancli app context --app-id 79782 --env dev --output json
+powershell -ExecutionPolicy Bypass -File <plugin-root>/tools/zancli/ensure_zancli.ps1 -- zancli app context --app-name self-container-test --env dev --output json
+# or:
 python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-id 79782 --env dev
 python3 <app-context-skill-dir>/scripts/resolve_app_context.py --app-name self-container-test --env dev
 # fallback when bash is available:

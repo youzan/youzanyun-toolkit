@@ -80,7 +80,7 @@ codex plugin add youzanyun-toolkit@youzan
 
 Toolkit 在应用级操作前会自动校验 `zancli`，并按 stable 渠道安装或升级。需要手动安装时，按本机系统执行以下命令。
 
-Windows 原生环境下，Toolkit 的应用上下文解析会通过 Python 入口安装并显式调用 `~/bin/zancli.exe`，不要求额外安装 Git Bash，也不依赖 `~/bin` 在旧版 `zancli` 目录之前。
+Windows 原生环境下，Toolkit 可通过 PowerShell 或 Python 入口安装并显式调用 `~/bin/zancli.exe`，不要求额外安装 Git Bash，也不依赖 `~/bin` 在旧版 `zancli` 目录之前。
 
 ### Linux（AMD64）
 
@@ -103,7 +103,13 @@ zancli --version
 
 ### Windows（AMD64）
 
-在 PowerShell 中执行以下命令。命令会先读取 `stable.txt`，不会固定到某个版本：
+在 PowerShell 中优先执行插件内置脚本。脚本会先读取 `stable.txt`，不会固定到某个版本，并会显式调用安装后的 `~/bin/zancli.exe`：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File <plugin-root>\tools\zancli\ensure_zancli.ps1 --check
+```
+
+如需手动安装，可在 PowerShell 中执行以下命令：
 
 ```powershell
 $version = (curl.exe -fsSL "https://yzy-static.yzcdn.cn/devtools/release/stable.txt").Trim()

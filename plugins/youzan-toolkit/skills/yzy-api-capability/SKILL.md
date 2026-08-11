@@ -9,7 +9,7 @@ description: 查询和预检有赞云开放 API 能力包授权。用于设计�
 
 所有 `capability` 操作都先使用 `yzy-app-context` 解析目标应用；该 skill 会连带完成 `zancli` 的安装和登录校验。不要直接根据当前目录、应用名或上一轮对话执行 API 能力包命令。
 
-`zancli` 安装校验入口同时提供 Python 和 Bash 两种形式。优先尝试 `python3 <plugin-root>/tools/zancli/ensure_zancli.py`；如果当前环境没有可用 Python 但有 Bash，再尝试 `bash <plugin-root>/tools/zancli/ensure_zancli.sh`。
+`zancli` 安装校验入口同时提供 PowerShell、Python 和 Bash 三种形式。Windows 原生优先尝试 `powershell -ExecutionPolicy Bypass -File <plugin-root>/tools/zancli/ensure_zancli.ps1`；通用环境优先尝试 `python3 <plugin-root>/tools/zancli/ensure_zancli.py`；如果当前环境没有可用 PowerShell/Python 但有 Bash，再尝试 `bash <plugin-root>/tools/zancli/ensure_zancli.sh`。
 
 ## 通用前置
 
