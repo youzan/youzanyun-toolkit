@@ -129,9 +129,10 @@ zancli --version
 | `yzy-project-bootstrap` | 初始化有赞云开放工程，或排查工程首次启动流程。 |
 | `yzy-frontend-dev` | 开发 H5、小程序、商家端页面扩展，以及 Slot、Data、Method、Hook、Event 等前端开放能力。 |
 | `yzy-browser-debug` | 调试本地运行页面，包括 Console 报错、Network 异常、DOM 状态、热更新和页面连接问题。 |
+| `yzy-frontend-scenario-dev` | 识别开放 2.0 前端定制场景，路由到页面定制、独立页面、整页替换和下单/支付 Hook，并按官方依据落地最小代码修改。 |
 | `yzy-app-context` | 在应用级操作前解析和校验目标应用、环境、发布目标、绑定 addon 和开放能力状态。 |
 | `yzy-api-capability` | 设计或调用开放 API 前，查询能力包、能力包详情、目标 API 授权状态，并在明确确认后申请能力包。 |
-| `yzy-app-env` | 读取、脱敏查看、受控注入和变更有赞应用环境变量。 |
+| `yzy-app-env` | 管理有赞应用环境变量，支持读取、脱敏查看、受控注入子进程，以及在明确授权后创建、更新和删除变量。 |
 | `yzy-pipeline` | 查询构建计划、触发构建、查看构建记录状态和步骤日志。 |
 | `yzy-log-trace` | 搜索应用日志、统计日志、展开日志上下文、按 traceId 汇总链路排障。 |
 | `yzy-rds` | 查询应用绑定数据库、表结构、DDL 预检查、DML 查询和历史记录。 |
@@ -224,7 +225,7 @@ zancli --version
 
 ### 3. 管理应用环境变量
 
-适用于读取、脱敏查看、受控注入或变更有赞应用环境变量。
+适用于读取、脱敏查看、受控注入或变更有赞应用环境变量。`yzy-app-env` 覆盖 `zancli app env list/get/exec/create/update/delete`。
 
 在 Codex 输入：
 
@@ -247,6 +248,7 @@ Codex 应完成的动作：
 - 默认按 CLI 脱敏展示敏感键值。
 - `exec` 仅向指定子进程注入环境变量，不修改父 shell。
 - `create`、`update`、`delete` 都属于写操作，需要开发者明确确认。
+- 明文读取只允许在用户明确授权并带 `--confirm` 时使用，且不要在回复里复述明文值。
 
 ### 4. 开发前端开放页面
 
@@ -266,6 +268,12 @@ Codex 应完成的动作：
 使用 yzy-frontend-dev，检查当前工程里已有的商家端页面扩展实现，并按相同模式新增一个入口。
 ```
 
+如果需求核心是判断开放 2.0 场景、选择页面定制/独立页面/整页替换/Hook 路由，优先使用 `yzy-frontend-scenario-dev`：
+
+```text
+使用 yzy-frontend-scenario-dev，判断这个需求应该走页面定制、独立页面、整页替换还是下单/支付 Hook，并按对应场景完成落地。
+```
+
 Codex 应完成的动作：
 
 - 读取目标工程的 `README.md`、`AGENTS.md`、`package.json` 和相邻实现。
@@ -274,6 +282,8 @@ Codex 应完成的动作：
 - 判断可用能力边界。
 - 修改代码并说明改动范围。
 - 使用工程已有验证方式检查结果。
+
+对于纯场景判断和开放 2.0 代码骨架落地，`yzy-frontend-scenario-dev` 还会先读取对应引用文件，再做最小必要修改。
 
 开发者需要提供的信息：
 

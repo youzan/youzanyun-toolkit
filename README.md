@@ -10,14 +10,16 @@
 
 - `yzy-project-bootstrap`：初始化有赞云开放工程和本地开发环境。
 - `yzy-frontend-dev`：按开放能力约束开发 H5、小程序和商家端页面。
+- `yzy-frontend-scenario-dev`：识别开放 2.0 前端定制场景并完成最小必要代码落地。
 - `yzy-browser-debug`：通过项目内 `yzy-debug` 读取 Console、Network 和 DOM。
 - `yzy-knowledge-search`：检索有赞云文档目录与知识库。
 - `yzy-app-context`：解析应用上下文。
+- `yzy-frontend-scenario-dev`：识别开放 2.0 前端定制场景并完成页面定制、独立页面、整页替换和下单/支付 Hook 落地。
 - `yzy-pipeline`：查询和触发构建计划。
 - `yzy-log-trace`：查询日志和 Trace。
 - `yzy-rds`：查询和操作应用绑定的 RDS。
 - `yzy-api-capability`：查询、预检和申请开放 API 能力包授权。
-- `yzy-app-env`：读取、注入和变更应用环境变量。
+- `yzy-app-env`：管理应用环境变量，支持读取、脱敏查看、受控注入子进程，以及在明确授权后创建、更新和删除变量。
 
 ## 制品边界
 
@@ -27,7 +29,7 @@ Youzanyun Toolkit 是 AI 开发入口，不承载其他产品源码：
 |---|---|---|
 | Codex 插件包 `youzanyun-toolkit` | 本仓库 Git marketplace | 分发 Skills、工具脚本和发布版本信息 |
 | `@youzan-cloud/cli` | 内部 npm | 提供有赞云开放工程初始化流程；Toolkit 只记录已验证版本和调用方式 |
-| `zancli` | 公网 stable 安装脚本 | 提供应用上下文、能力包、发布、日志、Trace、RDS 等应用操作命令；Toolkit 负责在使用前安装或升级到 stable 版本，并提供登录校验和使用约束 |
+| `zancli` | 公网 stable 安装脚本 | 提供应用上下文、能力包、发布、日志、Trace、RDS、环境变量等应用操作命令；Toolkit 负责在使用前安装或升级到 stable 版本，并提供登录校验和使用约束 |
 | `@youzan-cloud/browser-runtime` | 内部 npm | 提供调试规则，不复制 Runtime 源码 |
 | YZY Browser Developer Tool | Chrome 扩展 ZIP/后续扩展市场 | 提供最低版本和下载信息 |
 | `cloud-ui-v2` | Git 模板仓库 | 提供工程规范，不复制模板源码 |

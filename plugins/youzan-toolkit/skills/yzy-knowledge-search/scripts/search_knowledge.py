@@ -9,6 +9,7 @@ import re
 import sys
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 
@@ -34,17 +35,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="查询有赞知识库。")
     parser.add_argument("query", help="搜索词，例如：订单接口")
     parser.add_argument("--original-query", help="原始问题，用于记录上下文")
-    parser.add_argument(
-        "--mode",
-        choices=("rag", "wiki", "hybrid", "nav"),
-        default="rag",
-        help="检索模式，默认 rag；wiki/hybrid 应由 Agent 明确选择",
-    )
+    parser.add_argument("--mode", choices=("rag", "wiki", "nav"), default="rag", help="检索模式，默认 rag")
     parser.add_argument("--top-k", type=int, default=3, help="返回结果数量")
     parser.add_argument("--endpoint", default=ENDPOINT, help="覆盖默认搜索接口地址")
     parser.add_argument("--wiki-endpoint", default=WIKI_ENDPOINT, help="覆盖默认 wiki 搜索接口地址")
     parser.add_argument("--wiki-limit", type=int, default=5, help="wiki 搜索返回数量")
-    parser.add_argument("--wiki-keywords", help="wiki 关键词，多个关键词用 | 分隔，最多 3 个；wiki/hybrid 模式必填")
+    parser.add_argument("--wiki-keywords", help="wiki 关键词，只传 1 个高识别度客体；wiki 模式必填")
     parser.add_argument("--wiki-section-limit", type=int, default=4, help="每条 wiki 结果保留的相关章节数量")
     parser.add_argument("--timeout", type=float, default=30.0, help="请求超时时间，单位秒")
     parser.add_argument("--format", choices=("json", "pretty"), default="json", help="输出格式，默认 json")
@@ -55,7 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--navigation-timeout", type=float, default=5.0, help="导航请求超时时间，单位秒")
     parser.add_argument("--navigation-module-depth", type=int, default=3, help="读取前 N 个模块的二级目录")
     parser.add_argument("--no-source-hydration", action="store_true", help="不读取首条结果的 Markdown 原文")
-    parser.add_argument("--source-depth", type=int, default=1, help="读取前 N 条结果的 Markdown 原文")
+    parser.add_argument("--source-depth", type=int, default=0, help="读取前 N 条结果的 Markdown 原文")
     parser.add_argument("--source-timeout", type=float, default=5.0, help="原文请求超时时间，单位秒")
     parser.add_argument("--source-excerpt-limit", type=int, default=2500, help="每条原文相关片段的最大字符数")
     return parser.parse_args()
@@ -183,6 +179,14 @@ def post_json(url: str, payload: dict[str, Any], timeout: float) -> Any:
         return json.loads(response.read().decode("utf-8"))
 
 
+def fetch_rag_result(endpoint: str, query: str, top_k: int, timeout: float) -> Any:
+    return post_json(endpoint, {"query": query, "topK": top_k}, timeout)
+
+
+def fetch_wiki_result(endpoint: str, query: str, limit: int, timeout: float) -> Any:
+    return post_json(endpoint, {"query": query, "limit": limit}, timeout)
+
+
 def format_http_error(prefix: str, exc: urllib.error.HTTPError) -> str:
     detail = exc.read().decode("utf-8", errors="replace")
     compact = truncate(re.sub(r"<[^>]+>", " ", detail), 300)
@@ -259,7 +263,7 @@ def rank_entries(query: str, entries: list[dict[str, str]], limit: int) -> list[
 def parse_wiki_keywords(raw: str | None) -> list[str]:
     if not raw:
         return []
-    return [keyword.strip() for keyword in raw.split("|") if keyword.strip()][:3]
+    return [keyword.strip() for keyword in raw.split("|") if keyword.strip()][:1]
 
 
 def split_markdown_sections(markdown: str) -> list[dict[str, Any]]:
@@ -634,12 +638,9 @@ def build_answer(
     source_excerpt_limit: int = 2500,
 ) -> dict[str, Any]:
     raw_items = find_result_list(data)
-    rag_evidence = [normalize_item(item) for item in raw_items[: max(top_k * 4, 10)]]
+    rag_evidence = [normalize_item(item) for item in raw_items[:top_k]]
     rag_evidence = [item for item in rag_evidence if any(item.values())]
-    evidence = dedupe_evidence([*(wiki_evidence or []), *rag_evidence])
-    if source_depth > 0:
-        hydrate_evidence(evidence, used_query, source_depth, source_timeout, source_excerpt_limit)
-    evidence.sort(
+    rag_evidence.sort(
         key=lambda item: (
             evidence_rank_score(item, used_query),
             len(item.get("matchedKeywords") or []),
@@ -649,7 +650,24 @@ def build_answer(
         ),
         reverse=True,
     )
-    evidence = evidence[:top_k]
+    if mode == "wiki":
+        evidence = dedupe_evidence([*rag_evidence, *(wiki_evidence or [])])
+    else:
+        evidence = dedupe_evidence(rag_evidence)
+    if source_depth > 0:
+        hydrate_evidence(evidence, used_query, source_depth, source_timeout, source_excerpt_limit)
+    if mode != "wiki":
+        evidence.sort(
+            key=lambda item: (
+                evidence_rank_score(item, used_query),
+                len(item.get("matchedKeywords") or []),
+                bool(item.get("sourceExcerpt")),
+                item.get("sourceType") == "knowledge" and bool(item.get("sourceUrl")),
+                item.get("sourceType", ""),
+            ),
+            reverse=True,
+        )
+    evidence = evidence[: top_k * 2 if mode == "wiki" else top_k]
 
     if evidence:
         primary = evidence[0]
@@ -660,6 +678,8 @@ def build_answer(
             source_counts[source_type] = source_counts.get(source_type, 0) + 1
         source_summary = "、".join(f"{key} {value} 条" for key, value in source_counts.items())
         conclusion = f"{mode} 模式返回 {len(evidence)} 条与“{used_query}”相关的证据（{source_summary}），优先参考：{primary_name}"
+    elif navigation and navigation.get("modules"):
+        conclusion = f"nav 模式返回 {len(navigation.get('modules') or [])} 个目录模块，优先参考：{(navigation.get('modules') or [{}])[0].get('title', '首条模块')}"
     else:
         conclusion = f"{mode} 模式未返回与“{used_query}”可归纳的结果。"
 
@@ -735,6 +755,8 @@ def print_pretty(answer: dict[str, Any]) -> None:
                 print(f"   Wiki slug：{item['slug']}")
             if item.get("hydratedSourceUrl"):
                 print(f"   Markdown 原文：{item['hydratedSourceUrl']}")
+            if item.get("sourceUrl"):
+                print(f"   原始链接：{item['sourceUrl']}")
             if item.get("categoryPath"):
                 print(f"   类目路径：{item['categoryPath']}")
             if item.get("url"):
@@ -789,11 +811,12 @@ def main() -> int:
     original_query = (args.original_query or used_query).strip()
     mode = args.mode
     wiki_keywords = parse_wiki_keywords(args.wiki_keywords)
-    if mode in {"wiki", "hybrid"} and not wiki_keywords:
-        print("--mode wiki/hybrid 必须显式传入 --wiki-keywords 'kw1|kw2|kw3'", file=sys.stderr)
+    if mode == "wiki" and not wiki_keywords:
+        print("--mode wiki 必须显式传入 --wiki-keywords 'kw1'", file=sys.stderr)
         return 2
+
     navigation = None
-    if not args.no_navigation:
+    if mode == "nav" and not args.no_navigation:
         navigation = build_navigation(
             used_query,
             args.navigation_url,
@@ -805,49 +828,54 @@ def main() -> int:
     data: Any = {}
     wiki_response: Any = None
     wiki_evidence: list[dict[str, Any]] = []
+    wiki_error: str | None = None
+    rag_error: str | None = None
 
-    if mode in {"wiki", "hybrid"}:
+    if mode == "wiki":
         wiki_query = "|".join(wiki_keywords[:3])
-        try:
-            wiki_response = post_json(
-                args.wiki_endpoint,
-                {"query": wiki_query, "limit": args.wiki_limit},
-                args.timeout,
-            )
-            wiki_evidence = build_wiki_evidence(
-                wiki_response,
-                used_query,
-                wiki_keywords,
-                args.top_k,
-                args.wiki_section_limit,
-            )
-        except urllib.error.HTTPError as exc:
-            error = format_http_error("Wiki", exc)
-            if mode == "wiki":
-                print(error, file=sys.stderr)
-                return 1
-            print(error, file=sys.stderr)
-        except (urllib.error.URLError, json.JSONDecodeError) as exc:
-            if mode == "wiki":
-                print(f"Wiki 请求失败：{exc}", file=sys.stderr)
-                return 1
-            print(f"Wiki 请求失败：{exc}", file=sys.stderr)
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            wiki_future = executor.submit(fetch_wiki_result, args.wiki_endpoint, wiki_query, args.wiki_limit, args.timeout)
+            rag_future = executor.submit(fetch_rag_result, args.endpoint, used_query, args.top_k, args.timeout)
 
-    if mode in {"rag", "hybrid"}:
+            try:
+                wiki_response = wiki_future.result()
+                wiki_evidence = build_wiki_evidence(
+                    wiki_response,
+                    used_query,
+                    wiki_keywords,
+                    1,
+                    args.wiki_section_limit,
+                )
+            except urllib.error.HTTPError as exc:
+                wiki_error = format_http_error("Wiki", exc)
+            except (urllib.error.URLError, json.JSONDecodeError) as exc:
+                wiki_error = f"Wiki 请求失败：{exc}"
+
+            try:
+                data = rag_future.result()
+            except urllib.error.HTTPError as exc:
+                rag_error = format_http_error("", exc)
+            except (urllib.error.URLError, json.JSONDecodeError) as exc:
+                rag_error = f"请求失败：{exc}"
+
+        if not wiki_evidence and not data:
+            print(wiki_error or rag_error or "Wiki / RAG 请求失败", file=sys.stderr)
+            return 1
+        if wiki_error and not wiki_evidence:
+            print(wiki_error, file=sys.stderr)
+        if rag_error and not data:
+            print(rag_error, file=sys.stderr)
+    elif mode == "nav":
+        pass
+    else:
         try:
-            search_top_k = max(args.top_k * 4, 10)
-            data = post_json(args.endpoint, {"query": used_query, "topK": search_top_k}, args.timeout)
+            data = fetch_rag_result(args.endpoint, used_query, args.top_k, args.timeout)
         except urllib.error.HTTPError as exc:
-            error = format_http_error("", exc)
-            if mode == "rag" or not wiki_evidence:
-                print(error, file=sys.stderr)
-                return 1
-            print(error, file=sys.stderr)
+            print(format_http_error("", exc), file=sys.stderr)
+            return 1
         except (urllib.error.URLError, json.JSONDecodeError) as exc:
-            if mode == "rag" or not wiki_evidence:
-                print(f"请求失败：{exc}", file=sys.stderr)
-                return 1
             print(f"请求失败：{exc}", file=sys.stderr)
+            return 1
 
     answer = build_answer(
         original_query,
@@ -857,7 +885,7 @@ def main() -> int:
         args.full_response,
         navigation,
         mode=mode,
-        wiki_keywords=wiki_keywords if mode in {"wiki", "hybrid"} else [],
+        wiki_keywords=wiki_keywords if mode == "wiki" else [],
         wiki_evidence=wiki_evidence,
         wiki_response=wiki_response,
         source_depth=0 if args.no_source_hydration else args.source_depth,

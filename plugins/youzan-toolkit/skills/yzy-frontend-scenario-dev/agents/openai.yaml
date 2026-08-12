@@ -1,0 +1,4 @@
+interface:
+  display_name: "YZY 前端场景定制"
+  short_description: "识别开放 2.0 前端定制场景并完成代码落地"
+  default_prompt: "使用 $yzy-frontend-scenario-dev 识别我的开放 2.0 前端定制需求，路由到对应场景并完成最小必要代码修改。"
