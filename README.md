@@ -11,6 +11,7 @@
 - `yzy-project-bootstrap`：初始化有赞云开放工程和本地开发环境。
 - `yzy-frontend-dev`：按开放能力约束开发 H5、小程序和商家端页面。
 - `yzy-frontend-scenario-dev`：识别开放 2.0 前端定制场景并完成最小必要代码落地。
+- `yzy-knowledge-search`：结合文档目录导航、知识库和 wiki 搜索查询有赞云开放知识。
 - `yzy-browser-debug`：通过项目内 `yzy-debug` 读取 Console、Network 和 DOM。
 - `yzy-knowledge-search`：检索有赞云文档目录与知识库。
 - `yzy-app-context`：解析应用上下文。
